@@ -1,0 +1,23 @@
+﻿#ifndef THREAD_H
+#define THREAD_H
+
+#include <QObject>
+#include <QTcpSocket>
+
+class Thread : public QObject
+{
+    Q_OBJECT
+public:
+    explicit Thread(int socketDescriptor,QObject *parent = 0);
+    ~Thread();
+
+signals:
+
+public slots:
+    void slot_dealData();
+private:
+    int socketDescriptor;
+    QTcpSocket *tcpSocket;
+};
+
+#endif // THREAD_H

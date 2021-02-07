@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TcpServer</class>
- <widget class="QWidget" name="TcpServer">
+ <class>PokerServer</class>
+ <widget class="QWidget" name="PokerServer">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>766</width>
-    <height>652</height>
+    <width>791</width>
+    <height>556</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>TcpServer</string>
+   <string>PokerServer</string>
   </property>
-  <widget class="QTextBrowser" name="textBrowser_gameLog">
+  <widget class="QTextBrowser" name="textBrowser_log">
    <property name="geometry">
     <rect>
      <x>20</x>
      <y>20</y>
-     <width>311</width>
-     <height>611</height>
+     <width>291</width>
+     <height>521</height>
     </rect>
    </property>
   </widget>
   <widget class="QTextBrowser" name="textBrowser_lelaoji">
    <property name="geometry">
     <rect>
-     <x>360</x>
-     <y>30</y>
+     <x>380</x>
+     <y>20</y>
      <width>381</width>
-     <height>191</height>
+     <height>211</height>
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_begin">
+  <widget class="QPushButton" name="pushButton_listen">
    <property name="geometry">
     <rect>
-     <x>480</x>
-     <y>360</y>
+     <x>540</x>
+     <y>450</y>
      <width>75</width>
      <height>23</height>
     </rect>
