@@ -32,6 +32,8 @@ private slots:
     void slot_serverClose();
     void slot_readServer();
 
+    void on_pushButton_500_clicked();
+
 private:
 
     Ui::PokerClient *ui;

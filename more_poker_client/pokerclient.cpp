@@ -11,8 +11,6 @@ PokerClient::PokerClient(QWidget *parent) :
 
     tcpConnect = new QTcpSocket();
     nextBlockSize =0;
-    sendType = 0;
-    playerNo = -1;
     tcpConnect->connectToHost("127.0.01",4944);
     connect(tcpConnect,SIGNAL(connected()),
             this,SLOT(slot_connected()));
@@ -41,15 +39,15 @@ void PokerClient::slot_serverClose()
 
 void PokerClient::slot_readServer()
 {
-    QDataStream in(this);
+    QDataStream in(tcpConnect);
     in.setVersion((QDataStream::Qt_4_8));
     if(nextBlockSize == 0){
-        if(tcpSocket.bytesAvailable()<sizeof(quint16)) return;
+        if(tcpConnect->bytesAvailable()<sizeof(quint16)) return;
 
         in >> nextBlockSize;
     }
 
-    if(tcpSocket.bytesAvailable()<nextBlockSize) return;
+    if(tcpConnect->bytesAvailable()<nextBlockSize) return;
     quint8 requestType;
     in >>requestType;
     switch(requestType){
@@ -70,4 +68,9 @@ void PokerClient::on_pushButton_connect_clicked()
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpConnect->write(block);
+}
+
+void PokerClient::on_pushButton_500_clicked()
+{
+
 }

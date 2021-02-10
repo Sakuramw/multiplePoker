@@ -82,7 +82,7 @@ void Server::incomingConnection(int socketId)
             this,SLOT(slot_playerDo(int,int,bool,bool)));
     connect(this,SIGNAL(sig_gameover(int)),
             socket,SLOT(slot_gameOver(int)));
-    connect(this,SIGNAL(sig_updatePlayNo(int)),
+    connect(this,SIGNAL(sig_setOnlineId(int)),
             socket,SLOT(slot_updatePlayNo(int)));
     connect(this,SIGNAL(sig_setOnlineId(int)),
             socket,SLOT(slot_getOnlineId(int)));
@@ -92,6 +92,5 @@ void Server::incomingConnection(int socketId)
             this,SLOT(slot_playerQuit(int)));
 
     emit sig_setOnlineId(onlineNum);
-    emit sig_updatePlayNo(onlineNum);
 }
 
