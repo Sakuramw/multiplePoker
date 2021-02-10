@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        pokerclient.cpp
+        pokerclient.cpp \
+    player.cpp
 
-HEADERS  += pokerclient.h
+HEADERS  += pokerclient.h \
+    player.h
 
 FORMS    += pokerclient.ui

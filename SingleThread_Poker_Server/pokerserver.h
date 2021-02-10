@@ -1,9 +1,9 @@
 ﻿#ifndef POKERSERVER_H
 #define POKERSERVER_H
 
-#include <QWidget>
 #include "server.h"
-#include "clientthread.h"
+
+#include <QWidget>
 
 namespace Ui {
 class PokerServer;
@@ -16,15 +16,17 @@ class PokerServer : public QWidget
 public:
     explicit PokerServer(QWidget *parent = 0);
     ~PokerServer();
+public slots:
+    void slot_gameOver(int winner);
 
 private slots:
     void on_pushButton_listen_clicked();
-    void slot_newConnect();
+
 
 private:
     Ui::PokerServer *ui;
-    Server server;
-    int port;
+
+    Server pokerServer;
 };
 
 #endif // POKERSERVER_H
