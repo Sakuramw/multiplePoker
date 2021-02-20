@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PokerServer</class>
- <widget class="QWidget" name="PokerServer">
+ <class>Poker_Server</class>
+ <widget class="QWidget" name="Poker_Server">
   <property name="geometry">
    <rect>
     <x>0</x>

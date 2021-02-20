@@ -1,5 +1,4 @@
-﻿#include "pokerserver.h"
-#include "server.h"
+﻿#include "poker_client.h"
 #include <QApplication>
 #include <QTextCodec>
 
@@ -10,8 +9,7 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(codec);
     QTextCodec::setCodecForTr(codec);
     QApplication a(argc, argv);
-    PokerServer w;
-
+    Poker_Client w;
     w.show();
 
     return a.exec();

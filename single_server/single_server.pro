@@ -1,28 +1,25 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2021-02-10T10:48:06
+# Project created by QtCreator 2021-02-19T16:07:59
 #
 #-------------------------------------------------
 
 QT       += core gui network
 
-QMAKE_CXXFLAGS += -std=c++0x
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = SingleThread_Poker_Server
+TARGET = single_server
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        pokerserver.cpp \
-    server.cpp \
+        poker_server.cpp \
     client.cpp \
-    player.cpp
+    server.cpp
 
-HEADERS  += pokerserver.h \
-    server.h \
+HEADERS  += poker_server.h \
     client.h \
-    player.h
+    server.h \
+    transportdata.h
 
-FORMS    += pokerserver.ui
+FORMS    += poker_server.ui

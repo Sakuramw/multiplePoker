@@ -1,6 +1,6 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2021-02-07T15:33:10
+# Project created by QtCreator 2021-02-19T16:09:02
 #
 #-------------------------------------------------
 
@@ -8,15 +8,13 @@ QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = more_poker_client
+TARGET = single_Client
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        pokerclient.cpp \
-    player.cpp
+        poker_client.cpp
 
-HEADERS  += pokerclient.h \
-    player.h
+HEADERS  += poker_client.h
 
-FORMS    += pokerclient.ui
+FORMS    += poker_client.ui
