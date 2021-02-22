@@ -59,8 +59,8 @@
   <widget class="QPushButton" name="pushButton_ready">
    <property name="geometry">
     <rect>
-     <x>490</x>
-     <y>410</y>
+     <x>460</x>
+     <y>450</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -69,27 +69,14 @@
     <string>准备</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_500">
+  <widget class="QPushButton" name="pushButton_pass">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="geometry">
     <rect>
-     <x>331</x>
-     <y>231</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>+500</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="pushButton_pass">
-   <property name="geometry">
-    <rect>
-     <x>458</x>
-     <y>231</y>
+     <x>480</x>
+     <y>300</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -99,10 +86,13 @@
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_giveup">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>585</x>
-     <y>231</y>
+     <x>580</x>
+     <y>300</y>
      <width>75</width>
      <height>23</height>
     </rect>
@@ -146,6 +136,99 @@
      <height>20</height>
     </rect>
    </property>
+  </widget>
+  <widget class="QWidget" name="widget_myCard" native="true">
+   <property name="geometry">
+    <rect>
+     <x>410</x>
+     <y>350</y>
+     <width>181</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QLabel" name="label_card1">
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_card2">
+      <property name="font">
+       <font>
+        <pointsize>20</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QPushButton" name="pushButton_call">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>300</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>跟</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>260</y>
+     <width>311</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QLineEdit" name="lineEdit_money"/>
+    </item>
+    <item>
+     <widget class="QPushButton" name="pushButton_add">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="text">
+       <string>加注</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

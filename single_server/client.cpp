@@ -2,6 +2,7 @@
 #define CHAT 100
 #define PLAYER_NAME 11
 #define READY_FLAG 12
+#define PLAYDATA 31
 
 Client::Client(QObject *parent) : QTcpSocket(parent)
 {
@@ -10,7 +11,8 @@ Client::Client(QObject *parent) : QTcpSocket(parent)
     connect(this,SIGNAL(disconnected()),
             this,SLOT(slot_disconnected()));
 
-    nextBlockSize = 0;
+    nextBlockSize = 0,allMoney = 0,addMoney = 0;
+    roundMoney = 0;
 }
 
 Client::~Client()
@@ -34,6 +36,7 @@ void Client::slot_readClient()
     bool areYouOk = false;
     QByteArray btaChat ;
     QByteArray tempName;
+    QString str;
     in >> requestType;
     switch(requestType){
     case PLAYER_NAME:
@@ -47,8 +50,31 @@ void Client::slot_readClient()
             emit sig_isReady(playerName);
         }
         break;
-    case CHAT:
+    case PLAYDATA:
+        in >> seatId;
+        in >> addMoney >>isPass >>isGiveup;
+        if(isPass){
+            str = playerName+"跳过";
+            emit sig_radioLogText(str.toUtf8());
+        }
+        if(isGiveup){
+            str = playerName+"弃牌";
+            emit sig_radioLogText(str.toUtf8());
+        }
+        if(addMoney != 0){
+            roundMoney += addMoney;
+            str = playerName+"加注："+QString::number(addMoney);
+            emit sig_radioLogText(str.toUtf8());
 
+        }
+        if(addMoney == 0&&!isPass){
+            str = playerName+"跟注";
+            emit sig_radioLogText(str.toUtf8());
+        }
+        emit sig_playData(seatId,addMoney,isPass,isGiveup);
+        break;
+
+    case CHAT:
         in >> btaChat;
         emit sig_radioChatText(btaChat);
         break;

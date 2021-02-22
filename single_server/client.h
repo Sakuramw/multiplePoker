@@ -16,14 +16,19 @@ public slots:
 
 signals:
     void sig_radioChatText(QByteArray bta);
+    void sig_radioLogText(QByteArray bta);
     void sig_isReady(QString name);
     void sig_newPlayer();
     void sig_disconnected(int desc);
+    void sig_playData(int id,int money,bool pass,bool giveup);
 
 public slots:
 public:
     quint16 nextBlockSize;
     QString playerName;
+    int allMoney,addMoney;
+    bool isPass,isGiveup;
+    int seatId,roundMoney;
 };
 
 #endif // CLIENT_H
