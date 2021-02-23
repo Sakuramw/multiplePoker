@@ -3,6 +3,7 @@
 #define PLAYER_NAME 11
 #define READY_FLAG 12
 #define PLAYDATA 31
+#define WINNER  43
 
 Client::Client(QObject *parent) : QTcpSocket(parent)
 {
@@ -11,8 +12,8 @@ Client::Client(QObject *parent) : QTcpSocket(parent)
     connect(this,SIGNAL(disconnected()),
             this,SLOT(slot_disconnected()));
 
-    nextBlockSize = 0,allMoney = 0,addMoney = 0;
-    roundMoney = 0;
+    nextBlockSize = 0,allMoney = defaultBet,addMoney = 0;
+    score = 0;
 }
 
 Client::~Client()
@@ -62,16 +63,21 @@ void Client::slot_readClient()
             emit sig_radioLogText(str.toUtf8());
         }
         if(addMoney != 0){
-            roundMoney += addMoney;
+            allMoney += addMoney;
+            score = score - addMoney;
             str = playerName+"加注："+QString::number(addMoney);
             emit sig_radioLogText(str.toUtf8());
 
         }
-        if(addMoney == 0&&!isPass){
+        if(addMoney == 0&&!isPass&&!isGiveup){
             str = playerName+"跟注";
             emit sig_radioLogText(str.toUtf8());
         }
         emit sig_playData(seatId,addMoney,isPass,isGiveup);
+        break;
+    case WINNER:
+        in >> winnerId;
+        emit sig_winner(winnerId);
         break;
 
     case CHAT:
@@ -92,6 +98,11 @@ void Client::slot_readClient()
 void Client::slot_disconnected()
 {
     emit sig_disconnected(this->socketDescriptor());
+}
+
+void Client::slot_defaultSet(int money)
+{
+    defaultBet = money;
 }
 
 

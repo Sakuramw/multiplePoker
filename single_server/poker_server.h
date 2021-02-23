@@ -19,8 +19,10 @@ public:
 public slots:
     void slot_updateChat(QString str);
     void slot_updateLog(QString str);
+    void slot_gameBegin();
 
-
+signals:
+    void sig_defaultSet(int money,int id);
 
 private slots:
     void on_pushButton_listen_clicked();

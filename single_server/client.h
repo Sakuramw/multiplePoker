@@ -13,6 +13,7 @@ public:
 public slots:
     void slot_readClient();
     void slot_disconnected();
+    void slot_defaultSet(int money);
 
 signals:
     void sig_radioChatText(QByteArray bta);
@@ -21,6 +22,7 @@ signals:
     void sig_newPlayer();
     void sig_disconnected(int desc);
     void sig_playData(int id,int money,bool pass,bool giveup);
+    void sig_winner(int id);
 
 public slots:
 public:
@@ -28,7 +30,8 @@ public:
     QString playerName;
     int allMoney,addMoney;
     bool isPass,isGiveup;
-    int seatId,roundMoney;
+    int seatId,defaultBet;
+    int score,winnerId;
 };
 
 #endif // CLIENT_H

@@ -10,6 +10,10 @@
 #define SEAT 21
 #define WHOPLAY 22
 #define MYCARDS 23
+#define PUBLICCARD 33
+#define RADIOCARD 34
+#define NEWROUND 35
+#define OVERFLAG 41
 
 namespace Ui {
 class Poker_Client;
@@ -26,6 +30,7 @@ public slots:
     void slot_readServer();
     void slot_connected();
 //    void slot_turnMy();
+//    void slot_gameOver();
 
 signals:
 //    void sig_updateToLog(QString str);
@@ -49,16 +54,21 @@ private slots:
 
     void on_pushButton_call_clicked();
 
+    void on_pushButton_winner_clicked();
+
 private:
     Ui::Poker_Client *ui;
     QTcpSocket *tcpsocket;
     quint16 nextBlockSize;
     QString m_name;
 //    Player player;
-    int allMoney,addMoney,seatId,turnWho;
-    bool isPass,isGiveup,isTurnMy,isAdd;
-    QStringList myCards;
+    int allMoney,addMoney,seatId,turnWho,myCardFlag,puCardFlag;
+    bool isPass,isGiveup,isTurnMy,isAdd,isCall,isNewRound;
+    int score,judgeId;
+//    QStringList myCards;
+
     QList<QLabel *> cardLabel;
+    QList<QLabel *> pCard;
 };
 
 #endif // POKER_CLIENT_H
