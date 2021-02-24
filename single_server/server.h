@@ -44,11 +44,11 @@ public slots:
 private:
     void incomingConnection(int socketId);
 
-    QVector<int > readyId,inDesk;
+    QVector<int > readyId,inDesk/*disconnectSoDesc*/;
     int whoDealer,round,beatId,firstPassId,whoCall;
-    int roundMoney,allMoney,defaultMoney,defaultJudge,winnerId;
-    QStringList poker;
-    bool isANC,isFP,isFirstRun,isNewRound;
+    int roundMoney,allMoney,defaultMoney,defaultJudge,winnerId,whoNext;
+    QStringList poker/*disconnectName*/;
+    bool isANC,isFP,isFirstRun,isNewRound,isPlaying;
 };
 
 #endif // SERVER_H

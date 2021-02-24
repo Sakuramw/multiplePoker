@@ -29,6 +29,7 @@ public:
 public slots:
     void slot_readServer();
     void slot_connected();
+    void slot_disconnected();
 //    void slot_turnMy();
 //    void slot_gameOver();
 
@@ -55,6 +56,8 @@ private slots:
     void on_pushButton_call_clicked();
 
     void on_pushButton_winner_clicked();
+
+    void on_pushButton_local_clicked();
 
 private:
     Ui::Poker_Client *ui;

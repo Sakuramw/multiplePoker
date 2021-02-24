@@ -23,6 +23,8 @@ Poker_Client::Poker_Client(QWidget *parent) :
             this,SLOT(slot_readServer()));
     connect(tcpsocket,SIGNAL(connected()),
             this,SLOT(slot_connected()));
+    connect(tcpsocket,SIGNAL(disconnected()),
+            this,SLOT(slot_connected()));
 
     //    connect(this,SIGNAL(sig_iDo()),
     //            this,SLOT(slot_turnMy()));
@@ -176,6 +178,16 @@ void Poker_Client::slot_connected()
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
+    ui->lineEdit_name->hide();
+    ui->pushButton_join->hide();
+}
+
+void Poker_Client::slot_disconnected()
+{
+    ui->textBrowser_log->append("因为网络或者服务器原因，你已断开连接，请点击加入对局重连"
+                                "（如果正在对局中，请勿修改名字！！！）");
+    ui->lineEdit_name->show();
+    ui->pushButton_join->show();
 }
 
 //void Poker_Client::slot_turnMy()
@@ -205,8 +217,13 @@ void Poker_Client::on_pushButton_send_clicked()
 
 void Poker_Client::on_pushButton_join_clicked()
 {
-    m_name = ui->lineEdit_name->text();
-    tcpsocket->connectToHost("127.0.0.1",10005);
+    if(ui->lineEdit_name->text().isEmpty()){
+        ui->textBrowser_log->append("名字不能为空！");
+    }else{
+        m_name = ui->lineEdit_name->text();
+//        tcpsocket->connectToHost("127.0.0.1",10005);
+        tcpsocket->connectToHost("3q77570w05.zicp.vip",40128);
+    }
 }
 
 void Poker_Client::on_pushButton_ready_clicked()
@@ -232,22 +249,26 @@ void Poker_Client::on_pushButton_ready_clicked()
 
 void Poker_Client::on_pushButton_add_clicked()
 {
-    addMoney = ui->lineEdit_money->text().toInt();
-    allMoney += addMoney;
-    ui->lineEdit_money->clear();
-    QByteArray block;
-    QDataStream out(&block,QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_8);
-    out << quint16(0) << quint8(31) <<seatId
-        <<addMoney<<bool(false)<<bool(false);
-    out.device() ->seek(0);
-    out<<quint16(block.size()-sizeof(quint16));
-    tcpsocket->write(block);
-    ui->pushButton_add->setEnabled(false);
-    ui->pushButton_pass->setEnabled(false);
-    ui->pushButton_giveup->setEnabled(false);
-    ui->pushButton_call->setEnabled(false);
-    isNewRound = false;
+    if(ui->lineEdit_money->text().isEmpty()){
+        ui->textBrowser_log->append("加注只能在此基础上继续增加，如果你想跟，请按下方的 跟 按钮！");
+    }else{
+        addMoney = ui->lineEdit_money->text().toInt();
+        allMoney += addMoney;
+        ui->lineEdit_money->clear();
+        QByteArray block;
+        QDataStream out(&block,QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_8);
+        out << quint16(0) << quint8(31) <<seatId
+            <<addMoney<<bool(false)<<bool(false);
+        out.device() ->seek(0);
+        out<<quint16(block.size()-sizeof(quint16));
+        tcpsocket->write(block);
+        ui->pushButton_add->setEnabled(false);
+        ui->pushButton_pass->setEnabled(false);
+        ui->pushButton_giveup->setEnabled(false);
+        ui->pushButton_call->setEnabled(false);
+        isNewRound = false;
+    }
 }
 
 void Poker_Client::on_pushButton_pass_clicked()
@@ -303,13 +324,27 @@ void Poker_Client::on_pushButton_call_clicked()
 
 void Poker_Client::on_pushButton_winner_clicked()
 {
-    QByteArray block;
-    QDataStream out(&block,QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_4_8);
-    out << quint16(0) << quint8(43) <<ui->lineEdit_winner->text().toInt();
-    out.device() ->seek(0);
-    out<<quint16(block.size()-sizeof(quint16));
-    tcpsocket->write(block);
-    ui->lineEdit_winner->hide();
-    ui->pushButton_winner->hide();
+    if(ui->lineEdit_winner->text().isEmpty()){
+        ui->textBrowser_log->append("获胜者不能为空！");
+    }else{
+        QByteArray block;
+        QDataStream out(&block,QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_8);
+        out << quint16(0) << quint8(43) <<ui->lineEdit_winner->text().toInt();
+        out.device() ->seek(0);
+        out<<quint16(block.size()-sizeof(quint16));
+        tcpsocket->write(block);
+        ui->lineEdit_winner->hide();
+        ui->pushButton_winner->hide();
+    }
+}
+
+void Poker_Client::on_pushButton_local_clicked()
+{
+    if(ui->lineEdit_name->text().isEmpty()){
+        ui->textBrowser_log->append("名字不能为空！");
+    }else{
+        m_name = ui->lineEdit_name->text();
+        tcpsocket->connectToHost("127.0.0.1",10005);
+    }
 }

@@ -365,6 +365,19 @@
     <string>确定</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="pushButton_local">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>520</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>本地测试</string>
+   </property>
+  </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

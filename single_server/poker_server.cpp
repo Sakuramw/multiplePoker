@@ -48,3 +48,12 @@ void Poker_Server::on_pushButton_listen_clicked()
     }
     emit sig_defaultSet(ui->spinBox_money->text().toInt(),ui->spinBox_id->text().toInt());
 }
+
+void Poker_Server::on_pushButton_listen_net_clicked()
+{
+    ui->textBrowser_log->append(tr("开始网络监听"));
+    if(!server.listen(QHostAddress::Any,10005)){
+        ui->textBrowser_log->append("监听错误");
+    }
+    emit sig_defaultSet(ui->spinBox_money->text().toInt(),ui->spinBox_id->text().toInt());
+}

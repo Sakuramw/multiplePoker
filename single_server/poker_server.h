@@ -28,6 +28,8 @@ private slots:
     void on_pushButton_listen_clicked();
 
 
+    void on_pushButton_listen_net_clicked();
+
 private:
     Ui::Poker_Server *ui;
     Server server;
