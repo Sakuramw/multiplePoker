@@ -19,6 +19,7 @@ public:
     void m_sleep(int msec);
     void newRound();
     QVector<Client* > ClientList;
+    QVector<Client* > reconnectedClient;
 
 signals:
     void sig_updateLog(QString str);
@@ -35,6 +36,7 @@ public slots:
     void slot_newReady(QString name);
     void slot_disconnected(int desc);
     void slot_playGame();
+    void slot_reconnected();
 //    void slot_next();
     void slot_roundNum(int round);
     void slot_playData(int id,int money,bool pass,bool giveup);
@@ -46,7 +48,9 @@ private:
 
     QVector<int > readyId,inDesk/*disconnectSoDesc*/;
     int whoDealer,round,beatId,firstPassId,whoCall;
-    int roundMoney,allMoney,defaultMoney,defaultJudge,winnerId,whoNext;
+    int allMoney,defaultMoney,defaultJudge,winnerId,whoNext;
+//    int callMoney;
+    int addMoney;
     QStringList poker/*disconnectName*/;
     bool isANC,isFP,isFirstRun,isNewRound,isPlaying;
 };

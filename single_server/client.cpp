@@ -13,7 +13,7 @@ Client::Client(QObject *parent) : QTcpSocket(parent)
             this,SLOT(slot_disconnected()));
 
     nextBlockSize = 0,allMoney = defaultBet,addMoney = 0;
-    score = 0;
+    score = 0,thisRoundAdd = 0;
 }
 
 Client::~Client()
@@ -63,10 +63,9 @@ void Client::slot_readClient()
             emit sig_radioLogText(str.toUtf8());
         }
         if(addMoney != 0){
-            allMoney += addMoney;
-            score = score - addMoney;
-            str = playerName+"加注："+QString::number(addMoney);
-            emit sig_radioLogText(str.toUtf8());
+//            allMoney += addMoney;
+//            str = playerName+"加注："+QString::number(addMoney);
+//            emit sig_radioLogText(str.toUtf8());
 
         }
         if(addMoney == 0&&!isPass&&!isGiveup){

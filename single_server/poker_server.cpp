@@ -57,3 +57,15 @@ void Poker_Server::on_pushButton_listen_net_clicked()
     }
     emit sig_defaultSet(ui->spinBox_money->text().toInt(),ui->spinBox_id->text().toInt());
 }
+
+void Poker_Server::on_pushButton_clicked()
+{
+    if(server.ClientList.count() != 0){
+        for(int i =0;i<server.ClientList.count();i++){
+            ui->textBrowser_log->append(QString::number(server.ClientList[i]->score));
+        }
+    }else{
+        ui->textBrowser_log->append("暂时无人加入");
+    }
+
+}

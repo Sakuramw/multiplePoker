@@ -37,6 +37,8 @@ Poker_Client::Poker_Client(QWidget *parent) :
     ui->lineEdit_winner->setValidator(winnerValidator);
     ui->lineEdit_winner->hide();
     ui->pushButton_winner->hide();
+    ui->label_winner->hide();
+    ui->label_score->setText(QString::number(score));
 
 
 }
@@ -127,14 +129,11 @@ void Poker_Client::slot_readServer()
         //        pCard[puCardFlag++]->setText(tempCard);
         break;
     case RADIOCARD:
-        in >>tempId >>tempName >> otherCard1 >> otherCard2>> judgeId;
+        in >>tempId >>tempName >> otherCard1 >> otherCard2;
         str = QString::number(tempId) +"号"+ tempName + "的手牌是：" + otherCard1
                 + "和" + otherCard2;
         ui->textBrowser_log->append(str);
-        if(judgeId == seatId){
-            ui->lineEdit_winner->show();
-            ui->pushButton_winner->show();
-        }
+
         ui->pushButton_add->setEnabled(false);
         ui->pushButton_giveup->setEnabled(false);
         ui->pushButton_call->setEnabled(false);
@@ -143,11 +142,24 @@ void Poker_Client::slot_readServer()
     case NEWROUND:
         in >>isNewRound;
         break;
+    case JUDGE:
+        in>> judgeId;
+        if(judgeId == seatId){
+            ui->lineEdit_winner->show();
+            ui->pushButton_winner->show();
+            ui->label_winner->show();
+        }
+        break;
     case OVERFLAG:
+    {
         in >> score;
+        QString str = "你的积分变为：" + QString::number(score);
+        ui->textBrowser_log->append(str);
+        ui->label_score->setText(QString::number(score));
         allMoney = 0,addMoney = 0;
         myCardFlag = 0,puCardFlag = 0;
         ui->pushButton_ready->show();
+    }
         break;
     case CHAT:
         in >> tempChat;
@@ -178,7 +190,9 @@ void Poker_Client::slot_connected()
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
-    ui->lineEdit_name->hide();
+//    ui->lineEdit_name->hide();
+    ui->lineEdit_name->setEnabled(false);
+//    ui->label->hide();
     ui->pushButton_join->hide();
 }
 
@@ -217,12 +231,14 @@ void Poker_Client::on_pushButton_send_clicked()
 
 void Poker_Client::on_pushButton_join_clicked()
 {
+    serverIp = ui->lineEdit_ip->text();
+    port = ui->lineEdit_port->text().toInt();
     if(ui->lineEdit_name->text().isEmpty()){
         ui->textBrowser_log->append("名字不能为空！");
     }else{
         m_name = ui->lineEdit_name->text();
 //        tcpsocket->connectToHost("127.0.0.1",10005);
-        tcpsocket->connectToHost("3q77570w05.zicp.vip",40128);
+        tcpsocket->connectToHost(serverIp,port);
     }
 }
 
@@ -336,15 +352,7 @@ void Poker_Client::on_pushButton_winner_clicked()
         tcpsocket->write(block);
         ui->lineEdit_winner->hide();
         ui->pushButton_winner->hide();
+        ui->label_winner->hide();
     }
 }
 
-void Poker_Client::on_pushButton_local_clicked()
-{
-    if(ui->lineEdit_name->text().isEmpty()){
-        ui->textBrowser_log->append("名字不能为空！");
-    }else{
-        m_name = ui->lineEdit_name->text();
-        tcpsocket->connectToHost("127.0.0.1",10005);
-    }
-}

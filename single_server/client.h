@@ -29,6 +29,7 @@ public:
     quint16 nextBlockSize;
     QString playerName;
     int allMoney,addMoney;
+    int thisRoundAdd;
     bool isPass,isGiveup;
     int seatId,defaultBet;
     int score,winnerId;

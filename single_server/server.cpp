@@ -8,7 +8,9 @@ Server::Server(QObject *parent) : QTcpServer(parent)
 {
     whoDealer = 0,round = 1;
     whoCall = 0;
-    allMoney = 0,roundMoney = 0;
+    allMoney = 0;
+    addMoney = 0;
+    winnerId = -1;
     isANC = false,isFP = true , isFirstRun = true;
     isPlaying = false;
     connect(this,SIGNAL(sig_gameBegin()),
@@ -123,12 +125,14 @@ void Server::m_sleep(int msec)
 void Server::newRound()
 {
 
-    roundMoney = 0;
     isNewRound = true;
     isFP = true;
     isANC = false;
     whoNext = whoCall;
-
+    addMoney = 0;
+    for(int i =0;i<ClientList.count();i++){
+        ClientList[i]->thisRoundAdd = 0;
+    }
     while(inDesk[whoNext] == 0){
         whoNext++;
         if(whoNext >= ClientList.count()){
@@ -157,30 +161,9 @@ void Server::incomingConnection(int socketId)
         //有人重连
         Client *socket = new Client(this);
         socket->setSocketDescriptor(socketId);
-        //遍历clientlist找到名字
-        for(int i = 0;i<ClientList.count();i++){
-            if(socket->playerName == ClientList[i]->playerName){
-                ClientList[i] = socket;
-                connect(socket,SIGNAL(sig_radioChatText(QByteArray)),
-                        this,SLOT(slot_emitChatText(QByteArray)));
-                connect(socket,SIGNAL(sig_radioLogText(QByteArray)),
-                        this,SLOT(slot_emitLogText(QByteArray)));
-                //    connect(socket,SIGNAL(connected()),
-                //            this,SLOT(slot_emitChatText(QByteArray)));
-                connect(socket,SIGNAL(sig_newPlayer()),
-                        this,SLOT(slot_newPlayer()));
-                connect(socket,SIGNAL(sig_isReady(QString)),
-                        this,SLOT(slot_newReady(QString)));
-                connect(socket,SIGNAL(sig_disconnected(int)),
-                        this,SLOT(slot_disconnected(int)));
-                connect(socket,SIGNAL(sig_playData(int,int,bool,bool)),
-                        this,SLOT(slot_playData(int,int,bool,bool)));
-                connect(socket,SIGNAL(sig_winner(int)),
-                        this,SLOT(slot_winner(int)));
-            }
-        }
-
-
+        reconnectedClient.append(socket);
+        connect(socket,SIGNAL(sig_newPlayer()),
+                this,SLOT(slot_reconnected()));
     }else{
         Client *socket = new Client(this);
         readyId.append(0);
@@ -251,54 +234,210 @@ void Server::slot_newPlayer()
 
 void Server::slot_newReady(QString name)
 {
-    QString str;
-    str = name + "已准备";
-    slot_emitLogText(str.toUtf8());
-    for(int i = 0;i<ClientList.count();i++){
-        if(ClientList[i]->playerName == name){
-            readyId[i] = 1;
-        }
-    }
-    int readyNum = 0;
-    for(int i = 0;i<readyId.count();i++){
-        if(readyId[i] == 1) readyNum++;
-    }
-    if(readyNum == readyId.count()){  //游戏开始
-        isPlaying = true;
-        //分配座位号
+    if(isPlaying){
+        m_sleep(500);
         for(int i = 0;i<ClientList.count();i++){
-            QByteArray block;
-            QDataStream out(&block,QIODevice::WriteOnly);
-            out.setVersion(QDataStream::Qt_4_8);
-            out << quint16(0) << quint8(21) <<i;
-            out.device() ->seek(0);
-            out<<quint16(block.size()-sizeof(quint16));
-            ClientList[i]->write(block);
-            ClientList[i]->waitForBytesWritten();
-            ClientList[i]->seatId = i;
+            if(ClientList[i]->playerName == name){
+                QString str = ClientList[i]->playerName + "重新连接";
+                slot_emitLogText(str.toUtf8());
+                m_sleep(50);
+                //座位号
+                {
+                    QByteArray block;
+                    QDataStream out(&block,QIODevice::WriteOnly);
+                    out.setVersion(QDataStream::Qt_4_8);
+                    out << quint16(0) << quint8(21) <<i;
+                    out.device() ->seek(0);
+                    out<<quint16(block.size()-sizeof(quint16));
+                    ClientList[i]->write(block);
+                    ClientList[i]->waitForBytesWritten();
+                    ClientList[i]->seatId = i;
+                    m_sleep(50);
+                }
+                //发牌
+                {
+                    QByteArray block;
+                    QDataStream out(&block,QIODevice::WriteOnly);
+                    out << quint16(0) << quint8(23) <<poker[i];
+                    out.device() ->seek(0);
+                    out<<quint16(block.size()-sizeof(quint16));
+                    ClientList[i]->write(block);
+                    ClientList[i]->waitForBytesWritten();
+                }
+                m_sleep(100);
+                {
+                    QByteArray block;
+                    QDataStream out(&block,QIODevice::WriteOnly);
+                    out << quint16(0) << quint8(23) <<poker[i+ClientList.count()];
+                    out.device() ->seek(0);
+                    out<<quint16(block.size()-sizeof(quint16));
+                    ClientList[i]->write(block);
+                    ClientList[i]->waitForBytesWritten();
+                    m_sleep(100);
+                }
+                //回合
+                if(round == 1){
+                    QByteArray block;
+                    QDataStream out(&block,QIODevice::WriteOnly);
+                    out << quint16(0) << quint8(22) <<whoNext <<bool(false)<<bool(false);
+                    out.device() ->seek(0);
+                    out<<quint16(block.size()-sizeof(quint16));
+                    ClientList[i]->write(block);
+                    ClientList[i]->waitForBytesWritten();
+                    m_sleep(100);
+                }else if(round == 2){
+                    {
+                        QByteArray block;
+                        QDataStream out(&block,QIODevice::WriteOnly);
+                        out << quint16(0) << quint8(22) <<whoNext <<bool(false)<<bool(false);
+                        out.device() ->seek(0);
+                        out<<quint16(block.size()-sizeof(quint16));
+                        ClientList[i]->write(block);
+                        ClientList[i]->waitForBytesWritten();
+                        m_sleep(100);
+                    }
+                    for(int j = 2 * ClientList.count();j<2 * ClientList.count() + 3;j++){
+                        QByteArray block;
+                        QDataStream out(&block,QIODevice::WriteOnly);
+                        out << quint16(0) << quint8(33) <<poker[j];
+                        out.device() ->seek(0);
+                        out<<quint16(block.size()-sizeof(quint16));
+                        ClientList[i]->write(block);
+                        ClientList[i]->waitForBytesWritten();
+                        m_sleep(100);
+                    }
+                }else if(round == 3){
+                    {
+                        QByteArray block;
+                        QDataStream out(&block,QIODevice::WriteOnly);
+                        out << quint16(0) << quint8(22) <<whoNext <<bool(false)<<bool(false);
+                        out.device() ->seek(0);
+                        out<<quint16(block.size()-sizeof(quint16));
+                        ClientList[i]->write(block);
+                        ClientList[i]->waitForBytesWritten();
+                        m_sleep(100);
+                    }
+                    for(int j = 2 * ClientList.count();j<2 * ClientList.count() + 3;j++){
+                        QByteArray block;
+                        QDataStream out(&block,QIODevice::WriteOnly);
+                        out << quint16(0) << quint8(33) <<poker[j];
+                        out.device() ->seek(0);
+                        out<<quint16(block.size()-sizeof(quint16));
+                        ClientList[i]->write(block);
+                        ClientList[i]->waitForBytesWritten();
+                        m_sleep(100);
+                    }
+                    {
+                        QByteArray block;
+                        QDataStream out(&block,QIODevice::WriteOnly);
+                        out << quint16(0) << quint8(33) <<poker[2 * ClientList.count() + 3];
+                        out.device() ->seek(0);
+                        out<<quint16(block.size()-sizeof(quint16));
+                        ClientList[i]->write(block);
+                        ClientList[i]->waitForBytesWritten();
+                        m_sleep(200);
+                    }
+                }else if(round == 4){
+                    {
+                        QByteArray block;
+                        QDataStream out(&block,QIODevice::WriteOnly);
+                        out << quint16(0) << quint8(22) <<whoNext <<bool(false)<<bool(false);
+                        out.device() ->seek(0);
+                        out<<quint16(block.size()-sizeof(quint16));
+                        ClientList[i]->write(block);
+                        ClientList[i]->waitForBytesWritten();
+                        m_sleep(100);
+                    }
+                    for(int j = 2 * ClientList.count();j<2 * ClientList.count() + 3;j++){
+                        QByteArray block;
+                        QDataStream out(&block,QIODevice::WriteOnly);
+                        out << quint16(0) << quint8(33) <<poker[j];
+                        out.device() ->seek(0);
+                        out<<quint16(block.size()-sizeof(quint16));
+                        ClientList[i]->write(block);
+                        ClientList[i]->waitForBytesWritten();
+                        m_sleep(100);
+                    }
+                    {
+                        QByteArray block;
+                        QDataStream out(&block,QIODevice::WriteOnly);
+                        out << quint16(0) << quint8(33) <<poker[2 * ClientList.count() + 3];
+                        out.device() ->seek(0);
+                        out<<quint16(block.size()-sizeof(quint16));
+                        ClientList[i]->write(block);
+                        ClientList[i]->waitForBytesWritten();
+                        m_sleep(200);
+                    }
+                    {
+                        QByteArray block;
+                        QDataStream out(&block,QIODevice::WriteOnly);
+                        out << quint16(0) << quint8(33) <<poker[2 * ClientList.count() + 4];
+                        out.device() ->seek(0);
+                        out<<quint16(block.size()-sizeof(quint16));
+                        ClientList[i]->write(block);
+                        ClientList[i]->waitForBytesWritten();
+                        m_sleep(200);
+                    }
+                }
+
+            }
         }
-        m_sleep(200);
-
-
-        if(isFirstRun){
-            whoDealer = 0;
-            whoCall = whoDealer + 1;
-        }else{
-            whoDealer++;
-            if(whoDealer >= ClientList.count()) whoDealer = 0;
-            whoCall = whoDealer + 1;
-            if(whoCall >= ClientList.count()) whoCall = 0;
-        }
-
-        round = 1;
-        allMoney = defaultMoney * ClientList.count();
-        whoNext = whoCall;
-        roundMoney = 0;
-        QString str = "游戏开始，这把" + ClientList[whoDealer]->playerName
-                + "坐庄，" + ClientList[whoCall]->playerName + "先叫";
+    }else{
+        QString str;
+        str = name + "已准备";
         slot_emitLogText(str.toUtf8());
-        m_sleep(200);
-        emit sig_gameBegin();
+        for(int i = 0;i<ClientList.count();i++){
+            if(ClientList[i]->playerName == name){
+                readyId[i] = 1;
+            }
+        }
+        int readyNum = 0;
+        for(int i = 0;i<readyId.count();i++){
+            if(readyId[i] == 1) readyNum++;
+        }
+        if(readyNum == readyId.count()){  //游戏开始
+            if(ClientList.count() == 1){
+                QString str = "一个人不能玩游戏，快去叫人吧";
+                slot_emitLogText(str.toUtf8());
+            }else{
+                isPlaying = true;
+                //分配座位号
+                for(int i = 0;i<ClientList.count();i++){
+                    QByteArray block;
+                    QDataStream out(&block,QIODevice::WriteOnly);
+                    out.setVersion(QDataStream::Qt_4_8);
+                    out << quint16(0) << quint8(21) <<i;
+                    out.device() ->seek(0);
+                    out<<quint16(block.size()-sizeof(quint16));
+                    ClientList[i]->write(block);
+                    ClientList[i]->waitForBytesWritten();
+                    ClientList[i]->seatId = i;
+                }
+                m_sleep(200);
+
+
+                if(isFirstRun){
+                    whoDealer = 0;
+                    whoCall = whoDealer + 1;
+                }else{
+                    whoDealer++;
+                    if(whoDealer >= ClientList.count()) whoDealer = 0;
+                    whoCall = whoDealer + 1;
+                    if(whoCall >= ClientList.count()) whoCall = 0;
+                }
+
+                round = 1;
+                allMoney = defaultMoney * ClientList.count();
+                whoNext = whoCall;
+                addMoney = 0;
+                QString str = "游戏开始，这把" + ClientList[whoDealer]->playerName
+                        + "坐庄，" + ClientList[whoCall]->playerName + "先叫";
+                slot_emitLogText(str.toUtf8());
+                m_sleep(200);
+                emit sig_gameBegin();
+            }
+
+        }
     }
 }
 
@@ -330,10 +469,12 @@ void Server::slot_disconnected(int desc)
 void Server::slot_playGame()
 {
     isFirstRun = false;
+    for(int i = 0;i<ClientList.count();i++){
+        ClientList[i]->score = ClientList[i]->score - defaultMoney;
+    }
+
     //洗牌
     shuffleCards();
-
-
     //发牌
     for(int i = 0;i<2;++i){
         int k = whoDealer;
@@ -352,8 +493,40 @@ void Server::slot_playGame()
         m_sleep(200);
     }
 
-    emit sig_roundNum(1);
+    emit sig_roundNum(round);
 
+
+}
+
+void Server::slot_reconnected()
+{
+    m_sleep(200);
+    //遍历clientlist找到名字
+    for(int j = 0;j<reconnectedClient.count();j++){
+        for(int i = 0;i<ClientList.count();i++){
+            if(reconnectedClient[j]->playerName == ClientList[i]->playerName){
+                ClientList[i] = reconnectedClient[j];
+                connect(ClientList[i],SIGNAL(sig_radioChatText(QByteArray)),
+                        this,SLOT(slot_emitChatText(QByteArray)));
+                connect(ClientList[i],SIGNAL(sig_radioLogText(QByteArray)),
+                        this,SLOT(slot_emitLogText(QByteArray)));
+                //    connect(socket,SIGNAL(connected()),
+                //            this,SLOT(slot_emitChatText(QByteArray)));
+                connect(ClientList[i],SIGNAL(sig_newPlayer()),
+                        this,SLOT(slot_newPlayer()));
+                connect(ClientList[i],SIGNAL(sig_isReady(QString)),
+                        this,SLOT(slot_newReady(QString)));
+                connect(ClientList[i],SIGNAL(sig_disconnected(int)),
+                        this,SLOT(slot_disconnected(int)));
+                connect(ClientList[i],SIGNAL(sig_playData(int,int,bool,bool)),
+                        this,SLOT(slot_playData(int,int,bool,bool)));
+                connect(ClientList[i],SIGNAL(sig_winner(int)),
+                        this,SLOT(slot_winner(int)));
+                m_sleep(100);
+            }
+        }
+        reconnectedClient.remove(j);
+    }
 
 }
 
@@ -370,8 +543,7 @@ void Server::slot_roundNum(int round)
         QByteArray block;
         QDataStream out(&block,QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_4_8);
-        //        qDebug()<<ClientList.count();
-        out << quint16(0) << quint8(22) <<whoNext <<bool(false);
+        out << quint16(0) << quint8(22) <<whoNext <<bool(false)<<bool(false);
         out.device() ->seek(0);
         out<<quint16(block.size()-sizeof(quint16));
         for(int i = 0;i<ClientList.count();i++){
@@ -381,7 +553,6 @@ void Server::slot_roundNum(int round)
         }
         m_sleep(100);
     }else if(round == 2){
-        allMoney += roundMoney;
         //        emit sig_updateLog("第二回合");
         str = "第二回合";
         slot_emitLogText(str.toUtf8());
@@ -402,7 +573,6 @@ void Server::slot_roundNum(int round)
             m_sleep(100);
         }
     }else if(round == 3){
-        allMoney += roundMoney;
         //        emit sig_updateLog("第三回合");
         str = "第三回合";
         slot_emitLogText(str.toUtf8());
@@ -420,7 +590,6 @@ void Server::slot_roundNum(int round)
         }
         m_sleep(100);
     }else if(round == 4){
-        allMoney += roundMoney;
         //        emit sig_updateLog("第四回合");
         str = "第四回合";
         slot_emitLogText(str.toUtf8());
@@ -438,7 +607,6 @@ void Server::slot_roundNum(int round)
         }
         m_sleep(100);
     }else if(round == 5){
-        allMoney += roundMoney;
         emit sig_updateLog("开牌");
         str = "开牌";
         slot_emitLogText(str.toUtf8());
@@ -450,7 +618,7 @@ void Server::slot_roundNum(int round)
                 QDataStream out(&block,QIODevice::WriteOnly);
                 out.setVersion(QDataStream::Qt_4_8);
                 out << quint16(0) << quint8(34)<<ClientList[i]->seatId<<ClientList[i]->playerName
-                    << poker[i] <<poker[i + ClientList.count()]<<defaultJudge;
+                    << poker[i] <<poker[i + ClientList.count()];
                 out.device() ->seek(0);
                 out<<quint16(block.size()-sizeof(quint16));
                 for(int j = 0;j<ClientList.count();j++){
@@ -460,6 +628,16 @@ void Server::slot_roundNum(int round)
                 m_sleep(100);
             }
 
+        }
+        QByteArray block;
+        QDataStream out(&block,QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_8);
+        out << quint16(0) << quint8(36)<<defaultJudge;
+        out.device() ->seek(0);
+        out<<quint16(block.size()-sizeof(quint16));
+        for(int j = 0;j<ClientList.count();j++){
+            ClientList[j]->write(block);
+            ClientList[j]->waitForBytesWritten();
         }
         m_sleep(100);
         slot_emitLogText("游戏结束");
@@ -490,20 +668,59 @@ void Server::slot_playData(int id, int money, bool pass, bool giveup)
     }
     if(money == 0&&!giveup){
         if(pass){
+            //过牌
             if(isFP){
                 firstPassId = id;
                 isFP = false;
             }
+        }else{
+            //跟牌
+            ClientList[id]->score = ClientList[id]->score-(addMoney-ClientList[id]->thisRoundAdd);
+            allMoney += (addMoney-ClientList[id]->thisRoundAdd);
+            ClientList[id]->thisRoundAdd = addMoney;
         }
     }
     if(money){
-        roundMoney += money;
-        QString str = "本回合筹码：" + QString::number(roundMoney);
-        slot_emitLogText(str.toUtf8());
+        if(money>addMoney){
+            beatId = id;
+            isANC = true,isFP = false;
+            addMoney = money;
+            allMoney += money;
+            ClientList[id]->score = ClientList[id]->score-(money-ClientList[id]->thisRoundAdd);
+            ClientList[id]->thisRoundAdd = money;
+            QString str = ClientList[id]->playerName + "加注："+QString::number(money);
+            slot_emitLogText(str.toUtf8());
+            m_sleep(100);
+            str = "本回合最高注：" + QString::number(money);
+            slot_emitLogText(str.toUtf8());
+            m_sleep(100);
+        }else{
+            QString str = "金额不能小于或等于上位投注玩家的注，请重新输入，跟注请按-跟-！";
+            {
+                QByteArray block;
+                QDataStream out(&block,QIODevice::WriteOnly);
+                out.setVersion(QDataStream::Qt_4_8);
+                out << quint16(0) << quint8(101) <<str.toUtf8();
+                out.device() ->seek(0);
+                out<<quint16(block.size()-sizeof(quint16));
+                ClientList[id]->write(block);
+                ClientList[id]->waitForBytesWritten();
+                m_sleep(100);
+            }
 
-        beatId = id;
-        isANC = true,isFP = false;
-
+            {
+                QByteArray block;
+                QDataStream out(&block,QIODevice::WriteOnly);
+                out.setVersion(QDataStream::Qt_4_8);
+                out << quint16(0) << quint8(22) <<id<<bool(true) <<bool(false);
+                out.device() ->seek(0);
+                out<<quint16(block.size()-sizeof(quint16));
+                ClientList[id]->write(block);
+                ClientList[id]->waitForBytesWritten();
+                m_sleep(100);
+                return;
+            }
+        }
     }
     isNewRound = false;
     do{
@@ -573,12 +790,32 @@ void Server::slot_playData(int id, int money, bool pass, bool giveup)
 void Server::slot_gameOver(int status)
 {
     if(status == 1){
-        //开牌结束，收到获胜者id
-        QString str = "获胜者是：" + ClientList[winnerId]->playerName;
-        //                        +","+ "本局赢了" + QString::number(allMoney);
-        //        ClientList[winnerId]->score += allMoney;
-        slot_emitLogText(str.toUtf8());
+        if(winnerId>=0&&winnerId<ClientList.count()){
+            //开牌结束，收到获胜者id
+            ClientList[winnerId]->score += allMoney;
+            QString str = "获胜者是：" + ClientList[winnerId]->playerName
+                                    +","+ "本局赢了" + QString::number(allMoney);
+            slot_emitLogText(str.toUtf8());
+            m_sleep(50);
+        }else{
+            QString str = "获胜者ID有误，请重新输入";
+            slot_emitLogText(str.toUtf8());
+            m_sleep(100);
 
+            QByteArray block;
+            QDataStream out(&block,QIODevice::WriteOnly);
+            out.setVersion(QDataStream::Qt_4_8);
+            out << quint16(0) << quint8(36)<<defaultJudge;
+            out.device() ->seek(0);
+            out<<quint16(block.size()-sizeof(quint16));
+            for(int j = 0;j<ClientList.count();j++){
+                ClientList[j]->write(block);
+                ClientList[j]->waitForBytesWritten();
+            }
+            m_sleep(100);
+
+            return;
+        }
     }
     if(status == 2){
         //弃牌结束
@@ -597,7 +834,7 @@ void Server::slot_gameOver(int status)
         QByteArray block;
         QDataStream out(&block,QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_4_8);
-        out << quint16(0) << quint8(41) <</*ClientList[i]->score*/int(0) ;
+        out << quint16(0) << quint8(41) <<ClientList[i]->score ;
         out.device() ->seek(0);
         out<<quint16(block.size()-sizeof(quint16));
         ClientList[i]->write(block);
@@ -615,9 +852,10 @@ void Server::slot_gameOver(int status)
     for(int i = 0;i<ClientList.count();i++){
         readyId[i] = 0;
         inDesk[i] = 1;
+        ClientList[i]->thisRoundAdd = 0;
     }
     //    isFP = true,isANC = false;
-    winnerId = 0;
+    winnerId = -1;
     m_sleep(300);
     return;
 }

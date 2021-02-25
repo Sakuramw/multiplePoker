@@ -14,6 +14,7 @@
 #define RADIOCARD 34
 #define NEWROUND 35
 #define OVERFLAG 41
+#define JUDGE 36
 
 namespace Ui {
 class Poker_Client;
@@ -57,17 +58,15 @@ private slots:
 
     void on_pushButton_winner_clicked();
 
-    void on_pushButton_local_clicked();
-
 private:
     Ui::Poker_Client *ui;
     QTcpSocket *tcpsocket;
     quint16 nextBlockSize;
-    QString m_name;
+    QString m_name,serverIp;
 //    Player player;
     int allMoney,addMoney,seatId,turnWho,myCardFlag,puCardFlag;
     bool isPass,isGiveup,isTurnMy,isAdd,isCall,isNewRound;
-    int score,judgeId;
+    int score,judgeId,port;
 //    QStringList myCards;
 
     QList<QLabel *> cardLabel;

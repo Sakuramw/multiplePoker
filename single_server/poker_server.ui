@@ -36,14 +36,14 @@
   <widget class="QPushButton" name="pushButton_listen">
    <property name="geometry">
     <rect>
-     <x>450</x>
+     <x>350</x>
      <y>500</y>
      <width>75</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>本地监听</string>
+    <string>本地测试</string>
    </property>
   </widget>
   <widget class="QSpinBox" name="spinBox_money">
@@ -116,7 +116,7 @@
   <widget class="QPushButton" name="pushButton_listen_net">
    <property name="geometry">
     <rect>
-     <x>570</x>
+     <x>520</x>
      <y>500</y>
      <width>75</width>
      <height>23</height>
@@ -124,6 +124,19 @@
    </property>
    <property name="text">
     <string>网络监听</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>260</y>
+     <width>111</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>显示所有人的积分</string>
    </property>
   </widget>
  </widget>
