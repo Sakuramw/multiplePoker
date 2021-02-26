@@ -37,7 +37,7 @@ void Client::slot_readClient()
     bool areYouOk = false;
     QByteArray btaChat ;
     QByteArray tempName;
-    QString str;
+    QString str,tempWinnerId;
     in >> requestType;
     switch(requestType){
     case PLAYER_NAME:
@@ -75,8 +75,8 @@ void Client::slot_readClient()
         emit sig_playData(seatId,addMoney,isPass,isGiveup);
         break;
     case WINNER:
-        in >> winnerId;
-        emit sig_winner(winnerId);
+        in >> tempWinnerId;
+        emit sig_winner(tempWinnerId);
         break;
 
     case CHAT:

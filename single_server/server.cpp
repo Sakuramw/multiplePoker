@@ -10,7 +10,7 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     whoCall = 0;
     allMoney = 0;
     addMoney = 0;
-    winnerId = -1;
+    winnerId.clear();
     isANC = false,isFP = true , isFirstRun = true;
     isPlaying = false;
     connect(this,SIGNAL(sig_gameBegin()),
@@ -24,28 +24,28 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     qsrand(time(0));
     for(int i=1;i<=13;i++){
         if(i == 1){
-            poker<<"♥A";
+            poker<<"<font color = red>♥A</font>";
         }else if(i == 11){
-            poker<<"♥J";
+            poker<<"<font color = red>♥J</font>";
         }else if(i == 12){
-            poker<<"♥Q";
+            poker<<"<font color = red>♥Q</font>";
         }else if(i == 13){
-            poker<<"♥K";
+            poker<<"<font color = red>♥K</font>";
         }else{
-            poker<<QString("♥%1").arg(QString::number(i));
+            poker<<QString("<font color = red>♥%1</font>").arg(QString::number(i));
         }
     }
     for(int i=1;i<=13;i++){
         if(i == 1){
-            poker<<"♦A";
+            poker<<"<font color = red>♦A</font>";
         }else if(i == 11){
-            poker<<"♦J";
+            poker<<"<font color = red>♦J</font>";
         }else if(i == 12){
-            poker<<"♦Q";
+            poker<<"<font color = red>♦Q</font>";
         }else if(i == 13){
-            poker<<"♦K";
+            poker<<"<font color = red>♦K</font>";
         }else{
-            poker<<QString("♦%1").arg(QString::number(i));
+            poker<<QString("<font color = red>♦%1</font>").arg(QString::number(i));
 
         }
     }
@@ -185,8 +185,8 @@ void Server::incomingConnection(int socketId)
                 this,SLOT(slot_disconnected(int)));
         connect(socket,SIGNAL(sig_playData(int,int,bool,bool)),
                 this,SLOT(slot_playData(int,int,bool,bool)));
-        connect(socket,SIGNAL(sig_winner(int)),
-                this,SLOT(slot_winner(int)));
+        connect(socket,SIGNAL(sig_winner(QString)),
+                this,SLOT(slot_winner(QString)));
     }
 }
 
@@ -520,8 +520,8 @@ void Server::slot_reconnected()
                         this,SLOT(slot_disconnected(int)));
                 connect(ClientList[i],SIGNAL(sig_playData(int,int,bool,bool)),
                         this,SLOT(slot_playData(int,int,bool,bool)));
-                connect(ClientList[i],SIGNAL(sig_winner(int)),
-                        this,SLOT(slot_winner(int)));
+                connect(ClientList[i],SIGNAL(sig_winner(QString)),
+                        this,SLOT(slot_winner(QString)));
                 m_sleep(100);
             }
         }
@@ -733,7 +733,15 @@ void Server::slot_playData(int id, int money, bool pass, bool giveup)
         if(whoNext == firstPassId) emit sig_roundNum(++round);
     }
     m_sleep(200);
-    if(isNewRound) whoNext = whoCall;
+    if(isNewRound){
+        whoNext = whoCall;
+        while(inDesk[whoNext] == 0){
+            whoNext++;
+            if(whoNext >= inDesk.count()){
+                whoNext = 0;
+            }
+        }
+    }
     if(round == 5) return;
     if(giveup){
         QByteArray block;
@@ -790,40 +798,59 @@ void Server::slot_playData(int id, int money, bool pass, bool giveup)
 void Server::slot_gameOver(int status)
 {
     if(status == 1){
-        if(winnerId>=0&&winnerId<ClientList.count()){
-            //开牌结束，收到获胜者id
-            ClientList[winnerId]->score += allMoney;
-            QString str = "获胜者是：" + ClientList[winnerId]->playerName
-                                    +","+ "本局赢了" + QString::number(allMoney);
+        for(int i = 0;i<winnerId.count();i++){
+            if(winnerId[i]<0 || winnerId[i] >= ClientList.count() || winnerId.count() > inDesk.count()){
+                QString str = "获胜者ID有误，请重新输入";
+                slot_emitLogText(str.toUtf8());
+                m_sleep(100);
+
+                QByteArray block;
+                QDataStream out(&block,QIODevice::WriteOnly);
+                out.setVersion(QDataStream::Qt_4_8);
+                out << quint16(0) << quint8(36)<<defaultJudge;
+                out.device() ->seek(0);
+                out<<quint16(block.size()-sizeof(quint16));
+                for(int j = 0;j<ClientList.count();j++){
+                    ClientList[j]->write(block);
+                    ClientList[j]->waitForBytesWritten();
+                }
+                winnerId.clear();
+                m_sleep(100);
+
+                return;
+            }
+        }
+        divideMoney = allMoney / winnerId.count();
+        //开牌结束，收到获胜者id
+        if(winnerId.count() == 1){
+            ClientList[winnerId[0]]->score += allMoney;
+            QString str = "获胜者是：" + ClientList[winnerId[0]]->playerName
+                    +"，"+ "本局共有筹码：" + QString::number(allMoney);
             slot_emitLogText(str.toUtf8());
             m_sleep(50);
         }else{
-            QString str = "获胜者ID有误，请重新输入";
-            slot_emitLogText(str.toUtf8());
-            m_sleep(100);
-
-            QByteArray block;
-            QDataStream out(&block,QIODevice::WriteOnly);
-            out.setVersion(QDataStream::Qt_4_8);
-            out << quint16(0) << quint8(36)<<defaultJudge;
-            out.device() ->seek(0);
-            out<<quint16(block.size()-sizeof(quint16));
-            for(int j = 0;j<ClientList.count();j++){
-                ClientList[j]->write(block);
-                ClientList[j]->waitForBytesWritten();
+            QString str = "本局共有" + QString::number(winnerId.count()) + "位赢家：," ;
+            for(int i = 0;i<winnerId.count();i++){
+                ClientList[winnerId[i]]->score += divideMoney;
+                str = str + ClientList[winnerId[i]]->playerName;
+                if(i != winnerId.count()-1){
+                    str = str + "、";
+                }
             }
-            m_sleep(100);
-
-            return;
+            str = str + "，分别获得：" + QString::number(divideMoney);
+            slot_emitLogText(str.toUtf8());
+            m_sleep(50);
         }
+
+
     }
     if(status == 2){
         //弃牌结束
         for(int i = 0;i<inDesk.count();i++){
             if(inDesk[i] == 1){
-                QString str = "获胜者是：" + ClientList[i]->playerName;
-                //                                        +","+ "本局赢了" + QString::number(allMoney);
-                //                ClientList[i]->score += allMoney;
+                ClientList[i]->score += allMoney;
+                QString str = "获胜者是：" + ClientList[i]->playerName
+                        +"，"+ "本局共有筹码：" + QString::number(allMoney);
                 slot_emitLogText(str.toUtf8());
             }
         }
@@ -855,7 +882,7 @@ void Server::slot_gameOver(int status)
         ClientList[i]->thisRoundAdd = 0;
     }
     //    isFP = true,isANC = false;
-    winnerId = -1;
+    winnerId.clear();
     m_sleep(300);
     return;
 }
@@ -866,8 +893,19 @@ void Server::slot_defaultSet(int money, int id)
     defaultJudge = id;
 }
 
-void Server::slot_winner(int id)
+void Server::slot_winner(QString id)
 {
-    winnerId = id;
+    //    for(int i = 0;i<id.count();i++){
+    //        if()
+    //        if(id[i+1]>='0'&&id[i+1]<='9'){
+    //            winnerId.append((id[i]+'0')*10+(id[i+1]+'0'));
+    //        }else{
+    //            winnerId.append(id[i]+'0');
+    //        }
+    //    }
+    QStringList idList = id.split(",",QString::SkipEmptyParts);
+    for(int i = 0;i<idList.count();i++){
+        winnerId.append(idList[i].toInt());
+    }
     emit sig_gameOver(1);
 }

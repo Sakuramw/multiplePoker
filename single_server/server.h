@@ -42,15 +42,14 @@ public slots:
     void slot_playData(int id,int money,bool pass,bool giveup);
     void slot_gameOver(int status);
     void slot_defaultSet(int money,int id);
-    void slot_winner(int id);
+    void slot_winner(QString id);
 private:
     void incomingConnection(int socketId);
-
-    QVector<int > readyId,inDesk/*disconnectSoDesc*/;
+    QVector<int > readyId,inDesk,winnerId;
     int whoDealer,round,beatId,firstPassId,whoCall;
-    int allMoney,defaultMoney,defaultJudge,winnerId,whoNext;
+    int allMoney,defaultMoney,defaultJudge,whoNext;
 //    int callMoney;
-    int addMoney;
+    int addMoney,divideMoney;
     QStringList poker/*disconnectName*/;
     bool isANC,isFP,isFirstRun,isNewRound,isPlaying;
 };

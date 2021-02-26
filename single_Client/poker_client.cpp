@@ -25,15 +25,18 @@ Poker_Client::Poker_Client(QWidget *parent) :
             this,SLOT(slot_connected()));
     connect(tcpsocket,SIGNAL(disconnected()),
             this,SLOT(slot_connected()));
-
+    //        QString test = "♦A";
+    //        if(test.contains("♦")){
+    //            ui->label_card1->setText("<font color = red>" + test + "</font>");
+    //        }
     //    connect(this,SIGNAL(sig_iDo()),
     //            this,SLOT(slot_turnMy()));
-
+    ui->pushButton_ready->setEnabled(false);
     QIntValidator* moneyValidator = new QIntValidator;
     moneyValidator->setRange(1, 100);
     ui->lineEdit_money->setValidator(moneyValidator);
-    QIntValidator* winnerValidator = new QIntValidator;
-    winnerValidator->setRange(0, 100);
+    QRegExp regx("[0-9,]+$");
+    QValidator *winnerValidator = new QRegExpValidator(regx);
     ui->lineEdit_winner->setValidator(winnerValidator);
     ui->lineEdit_winner->hide();
     ui->pushButton_winner->hide();
@@ -103,11 +106,17 @@ void Poker_Client::slot_readServer()
         break;
     case MYCARDS:
         in >> tempCard;
+//        if(tempCard.contains("♥") ||tempCard.contains("♦")){
+//            tempCard = "<font color = red>" + tempCard + "</font>";
+//        }
         //        myCards.append(tempCard);
         cardLabel[myCardFlag++]->setText(tempCard);
         break;
     case PUBLICCARD:
         in >> tempCard;
+//        if(tempCard.contains("♥") ||tempCard.contains("♦")){
+//            tempCard = "<font color = red>" + tempCard + "</font>";
+//        }
         switch (++puCardFlag) {
         case 1:
             ui->label_pcard1->setText(tempCard);
@@ -190,10 +199,11 @@ void Poker_Client::slot_connected()
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
-//    ui->lineEdit_name->hide();
+    //    ui->lineEdit_name->hide();
     ui->lineEdit_name->setEnabled(false);
-//    ui->label->hide();
+    //    ui->label->hide();
     ui->pushButton_join->hide();
+    ui->pushButton_ready->setEnabled(true);
 }
 
 void Poker_Client::slot_disconnected()
@@ -237,7 +247,7 @@ void Poker_Client::on_pushButton_join_clicked()
         ui->textBrowser_log->append("名字不能为空！");
     }else{
         m_name = ui->lineEdit_name->text();
-//        tcpsocket->connectToHost("127.0.0.1",10005);
+        //        tcpsocket->connectToHost("127.0.0.1",10005);
         tcpsocket->connectToHost(serverIp,port);
     }
 }
@@ -346,11 +356,12 @@ void Poker_Client::on_pushButton_winner_clicked()
         QByteArray block;
         QDataStream out(&block,QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_4_8);
-        out << quint16(0) << quint8(43) <<ui->lineEdit_winner->text().toInt();
+        out << quint16(0) << quint8(43) <<ui->lineEdit_winner->text();
         out.device() ->seek(0);
         out<<quint16(block.size()-sizeof(quint16));
         tcpsocket->write(block);
         ui->lineEdit_winner->hide();
+        ui->lineEdit_winner->clear();
         ui->pushButton_winner->hide();
         ui->label_winner->hide();
     }

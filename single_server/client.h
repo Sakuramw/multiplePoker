@@ -22,17 +22,18 @@ signals:
     void sig_newPlayer();
     void sig_disconnected(int desc);
     void sig_playData(int id,int money,bool pass,bool giveup);
-    void sig_winner(int id);
+    void sig_winner(QString id);
 
 public slots:
 public:
     quint16 nextBlockSize;
-    QString playerName;
+    QString playerName,winnerId;
     int allMoney,addMoney;
     int thisRoundAdd;
     bool isPass,isGiveup;
     int seatId,defaultBet;
-    int score,winnerId;
+    int score;
+
 };
 
 #endif // CLIENT_H

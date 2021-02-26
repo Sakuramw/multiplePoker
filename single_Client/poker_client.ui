@@ -110,7 +110,7 @@
   <widget class="QPushButton" name="pushButton_join">
    <property name="geometry">
     <rect>
-     <x>580</x>
+     <x>530</x>
      <y>580</y>
      <width>75</width>
      <height>23</height>
@@ -351,9 +351,9 @@
   <widget class="QLineEdit" name="lineEdit_winner">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>340</x>
      <y>550</y>
-     <width>111</width>
+     <width>131</width>
      <height>20</height>
     </rect>
    </property>
@@ -361,7 +361,7 @@
   <widget class="QPushButton" name="pushButton_winner">
    <property name="geometry">
     <rect>
-     <x>380</x>
+     <x>340</x>
      <y>580</y>
      <width>75</width>
      <height>23</height>
@@ -426,14 +426,17 @@
   <widget class="QLabel" name="label_winner">
    <property name="geometry">
     <rect>
-     <x>370</x>
-     <y>520</y>
-     <width>96</width>
-     <height>16</height>
+     <x>340</x>
+     <y>490</y>
+     <width>101</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
-    <string>请输入获胜者id：</string>
+    <string>请输入获胜者id（多人用英文逗号隔开,)：</string>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QLabel" name="label_lelaoji">
