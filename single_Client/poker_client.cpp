@@ -9,7 +9,8 @@ Poker_Client::Poker_Client(QWidget *parent) :
     tcpsocket = new QTcpSocket();
     nextBlockSize =0;
     allMoney = 0,addMoney = 0,myCardFlag = 0,puCardFlag = 0;
-    isAdd = false,isCall = false ,isNewRound = true;
+    isAdd = false,isCall = false ,isNewRound = true,isFirstRun = true;
+    isSending = false;
     score = 0;
     m_name = ui->lineEdit_name->text();
     ui->pushButton_add->setEnabled(false);
@@ -24,7 +25,9 @@ Poker_Client::Poker_Client(QWidget *parent) :
     connect(tcpsocket,SIGNAL(connected()),
             this,SLOT(slot_connected()));
     connect(tcpsocket,SIGNAL(disconnected()),
-            this,SLOT(slot_connected()));
+            this,SLOT(slot_disconnected()));
+//    connect(&disconTimer,SIGNAL(timeout()),
+//            this,SLOT(slot_loseConnect()));
     //        QString test = "♦A";
     //        if(test.contains("♦")){
     //            ui->label_card1->setText("<font color = red>" + test + "</font>");
@@ -51,6 +54,13 @@ Poker_Client::~Poker_Client()
     delete ui;
 }
 
+void Poker_Client::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Enter){
+        on_pushButton_send_clicked();
+    }
+}
+
 void Poker_Client::slot_readServer()
 {
 #if 1
@@ -64,10 +74,27 @@ void Poker_Client::slot_readServer()
     if(tcpsocket->bytesAvailable()<nextBlockSize) return;
     quint8 requestType;
     int tempId;
+//    bool isConfirm;
     QByteArray tempChat,tempLog;
     QString str,tempCard,tempName,otherCard1,otherCard2;
     in >> requestType;
     switch(requestType){
+    case PLAYERLIST:
+        in >> nameList;
+        ui->tableWidget_playerName->setRowCount(nameList.count());
+        for(int i = 0;i<nameList.count();i++){
+            QTableWidgetItem *item = new QTableWidgetItem(nameList[i]);
+            ui->tableWidget_playerName->setItem(i,0,item);
+        }
+        break;
+    case SCORELIST:
+        in >> playerScore;
+        ui->tableWidget_playerName->setRowCount(playerScore.count());
+        for(int i = 0;i<playerScore.count();i++){
+            QTableWidgetItem *item = new QTableWidgetItem(playerScore[i]);
+            ui->tableWidget_playerName->setItem(i,1,item);
+        }
+        break;
     case SEAT:
         in >> seatId ;
         ui->textBrowser_log->append("座位号："+QString::number(seatId));
@@ -106,17 +133,10 @@ void Poker_Client::slot_readServer()
         break;
     case MYCARDS:
         in >> tempCard;
-//        if(tempCard.contains("♥") ||tempCard.contains("♦")){
-//            tempCard = "<font color = red>" + tempCard + "</font>";
-//        }
-        //        myCards.append(tempCard);
         cardLabel[myCardFlag++]->setText(tempCard);
         break;
     case PUBLICCARD:
         in >> tempCard;
-//        if(tempCard.contains("♥") ||tempCard.contains("♦")){
-//            tempCard = "<font color = red>" + tempCard + "</font>";
-//        }
         switch (++puCardFlag) {
         case 1:
             ui->label_pcard1->setText(tempCard);
@@ -178,6 +198,24 @@ void Poker_Client::slot_readServer()
         in >> tempLog;
         ui->textBrowser_log->append(QString(tempLog));
         break;
+//    case OVERTIME:
+//        in >> isConfirm;
+//        disconTimer.stop();
+//        disconTimer.start(75050);
+//    {
+//        while(isSending){
+
+//        }
+//        QByteArray block;
+//        QDataStream out(&block,QIODevice::ReadWrite);
+//        out.setVersion(QDataStream::Qt_4_8);
+//        out << quint16(0) << quint8(102) <<bool(true);
+//        out.device() ->seek(0);
+//        out<<quint16(block.size()-sizeof(quint16));
+//        tcpsocket->write(block);
+//        tcpsocket->waitForBytesWritten();
+//    }
+//        break;
     }
 
 #endif
@@ -192,6 +230,7 @@ void Poker_Client::slot_readServer()
 void Poker_Client::slot_connected()
 {
     m_name = ui->lineEdit_name->text();
+    isSending = true;
     QByteArray block;
     QDataStream out(&block,QIODevice::ReadWrite);
     out.setVersion(QDataStream::Qt_4_8);
@@ -199,7 +238,9 @@ void Poker_Client::slot_connected()
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
+    tcpsocket->waitForBytesWritten();
     //    ui->lineEdit_name->hide();
+    isSending = false;
     ui->lineEdit_name->setEnabled(false);
     //    ui->label->hide();
     ui->pushButton_join->hide();
@@ -208,11 +249,16 @@ void Poker_Client::slot_connected()
 
 void Poker_Client::slot_disconnected()
 {
-    ui->textBrowser_log->append("因为网络或者服务器原因，你已断开连接，请点击加入对局重连"
+    ui->textBrowser_log->append("因为网络或者服务器原因，你已断开连接，请重启软件重连"
                                 "（如果正在对局中，请勿修改名字！！！）");
-    ui->lineEdit_name->show();
-    ui->pushButton_join->show();
+//    ui->lineEdit_name->show();
+//    ui->pushButton_join->show();
 }
+
+//void Poker_Client::slot_loseConnect()
+//{
+//    ui->textBrowser_log->append("你已失去连接，请重启程序重新连接");
+//}
 
 //void Poker_Client::slot_turnMy()
 //{
@@ -227,7 +273,7 @@ void Poker_Client::on_pushButton_send_clicked()
     strLelaoji = m_name + "：" + strLelaoji;
     ui->lineEdit_lelaoji->clear();
     QByteArray btaChatText = strLelaoji.toUtf8();
-
+    isSending = true;
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
@@ -236,7 +282,7 @@ void Poker_Client::on_pushButton_send_clicked()
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
     tcpsocket->waitForBytesWritten();
-
+    isSending = false;
 }
 
 void Poker_Client::on_pushButton_join_clicked()
@@ -260,6 +306,7 @@ void Poker_Client::on_pushButton_ready_clicked()
     for(int i = 0;i<cardLabel.count();i++){
         cardLabel[i]->clear();
     }
+    isSending = true;
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
@@ -268,7 +315,14 @@ void Poker_Client::on_pushButton_ready_clicked()
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
+    tcpsocket->waitForBytesWritten();
+    isSending = false;
     ui->pushButton_ready->hide();
+    if(isFirstRun){
+//        disconTimer.start(5501);
+        isFirstRun = false;
+    }
+
 }
 
 
@@ -281,6 +335,7 @@ void Poker_Client::on_pushButton_add_clicked()
         addMoney = ui->lineEdit_money->text().toInt();
         allMoney += addMoney;
         ui->lineEdit_money->clear();
+        isSending = true;
         QByteArray block;
         QDataStream out(&block,QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_4_8);
@@ -289,6 +344,8 @@ void Poker_Client::on_pushButton_add_clicked()
         out.device() ->seek(0);
         out<<quint16(block.size()-sizeof(quint16));
         tcpsocket->write(block);
+        tcpsocket->waitForBytesWritten();
+        isSending = false;
         ui->pushButton_add->setEnabled(false);
         ui->pushButton_pass->setEnabled(false);
         ui->pushButton_giveup->setEnabled(false);
@@ -299,6 +356,7 @@ void Poker_Client::on_pushButton_add_clicked()
 
 void Poker_Client::on_pushButton_pass_clicked()
 {
+    isSending = true;
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
@@ -307,15 +365,19 @@ void Poker_Client::on_pushButton_pass_clicked()
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
+    tcpsocket->waitForBytesWritten();
+    isSending = false;
     ui->pushButton_add->setEnabled(false);
     ui->pushButton_pass->setEnabled(false);
     ui->pushButton_giveup->setEnabled(false);
     ui->pushButton_call->setEnabled(false);
     isNewRound = false;
+
 }
 
 void Poker_Client::on_pushButton_giveup_clicked()
 {
+    isSending = true;
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
@@ -324,6 +386,8 @@ void Poker_Client::on_pushButton_giveup_clicked()
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
+    tcpsocket->waitForBytesWritten();
+    isSending = false;
     ui->pushButton_add->setEnabled(false);
     ui->pushButton_pass->setEnabled(false);
     ui->pushButton_giveup->setEnabled(false);
@@ -333,6 +397,7 @@ void Poker_Client::on_pushButton_giveup_clicked()
 
 void Poker_Client::on_pushButton_call_clicked()
 {
+    isSending = true;
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
@@ -341,6 +406,8 @@ void Poker_Client::on_pushButton_call_clicked()
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
+    tcpsocket->waitForBytesWritten();
+    isSending = false;
     ui->pushButton_add->setEnabled(false);
     ui->pushButton_pass->setEnabled(false);
     ui->pushButton_giveup->setEnabled(false);
@@ -353,6 +420,7 @@ void Poker_Client::on_pushButton_winner_clicked()
     if(ui->lineEdit_winner->text().isEmpty()){
         ui->textBrowser_log->append("获胜者不能为空！");
     }else{
+        isSending = true;
         QByteArray block;
         QDataStream out(&block,QIODevice::WriteOnly);
         out.setVersion(QDataStream::Qt_4_8);
@@ -360,6 +428,8 @@ void Poker_Client::on_pushButton_winner_clicked()
         out.device() ->seek(0);
         out<<quint16(block.size()-sizeof(quint16));
         tcpsocket->write(block);
+        tcpsocket->waitForBytesWritten();
+        isSending = false;
         ui->lineEdit_winner->hide();
         ui->lineEdit_winner->clear();
         ui->pushButton_winner->hide();

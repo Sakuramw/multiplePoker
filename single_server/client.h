@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QTimer>
 
 class Client : public QTcpSocket
 {
@@ -14,6 +15,9 @@ public slots:
     void slot_readClient();
     void slot_disconnected();
     void slot_defaultSet(int money);
+//    void slot_overTime();
+//    void slot_gameDiscon();
+//    void slot_connected();
 
 signals:
     void sig_radioChatText(QByteArray bta);
@@ -33,6 +37,7 @@ public:
     bool isPass,isGiveup;
     int seatId,defaultBet;
     int score;
+//    QTimer disconTime,timer1;
 
 };
 

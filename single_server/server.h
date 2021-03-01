@@ -7,6 +7,7 @@
 #include <QTcpServer>
 #include "client.h"
 #define MAXNUM 100
+#define PLAYERLIST 13
 
 class Server : public QTcpServer
 {
@@ -50,7 +51,7 @@ private:
     int allMoney,defaultMoney,defaultJudge,whoNext;
 //    int callMoney;
     int addMoney,divideMoney;
-    QStringList poker/*disconnectName*/;
+    QStringList poker/*disconnectName*/,playerList,playerScore;
     bool isANC,isFP,isFirstRun,isNewRound,isPlaying;
 };
 
