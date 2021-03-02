@@ -416,7 +416,7 @@ void Server::slot_newReady(QString name)
                         out<<quint16(block.size()-sizeof(quint16));
                         ClientList[i]->write(block);
                         ClientList[i]->waitForBytesWritten();
-                        m_sleep(200);
+                        m_sleep(50);
                     }
                 }else if(round == 4){
                     {
@@ -447,7 +447,7 @@ void Server::slot_newReady(QString name)
                         out<<quint16(block.size()-sizeof(quint16));
                         ClientList[i]->write(block);
                         ClientList[i]->waitForBytesWritten();
-                        m_sleep(200);
+                        m_sleep(50);
                     }
                     {
                         QByteArray block;
@@ -457,7 +457,7 @@ void Server::slot_newReady(QString name)
                         out<<quint16(block.size()-sizeof(quint16));
                         ClientList[i]->write(block);
                         ClientList[i]->waitForBytesWritten();
-                        m_sleep(200);
+                        m_sleep(50);
                     }
                 }else if(round == 5){
                     {
@@ -488,7 +488,7 @@ void Server::slot_newReady(QString name)
                         out<<quint16(block.size()-sizeof(quint16));
                         ClientList[i]->write(block);
                         ClientList[i]->waitForBytesWritten();
-                        m_sleep(200);
+                        m_sleep(50);
                     }
                     {
                         QByteArray block;
@@ -498,7 +498,7 @@ void Server::slot_newReady(QString name)
                         out<<quint16(block.size()-sizeof(quint16));
                         ClientList[i]->write(block);
                         ClientList[i]->waitForBytesWritten();
-                        m_sleep(200);
+                        m_sleep(50);
                     }
                     for(int j = 0;j<inDesk.count();j++){
                         if(inDesk[j] == 1){
@@ -562,7 +562,7 @@ void Server::slot_newReady(QString name)
                     ClientList[i]->waitForBytesWritten();
                     ClientList[i]->seatId = i;
                 }
-                m_sleep(200);
+                m_sleep(50);
 
 
                 if(isFirstRun){
@@ -582,7 +582,7 @@ void Server::slot_newReady(QString name)
                 QString str = "游戏开始，这把" + ClientList[whoDealer]->playerName
                         + "坐庄，" + ClientList[whoCall]->playerName + "先叫";
                 slot_emitLogText(str.toUtf8());
-                m_sleep(200);
+                m_sleep(50);
                 emit sig_gameBegin();
             }
 
@@ -671,7 +671,7 @@ void Server::slot_playGame()
             k++;
             if(k >= ClientList.count()) k = 0;
         }
-        m_sleep(200);
+        m_sleep(50);
     }
 
     emit sig_roundNum(round);
@@ -681,7 +681,7 @@ void Server::slot_playGame()
 
 void Server::slot_reconnected()
 {
-    m_sleep(200);
+    m_sleep(50);
     //遍历clientlist找到名字
     for(int j = 0;j<reconnectedClient.count();j++){
         isRecon = false;
@@ -945,7 +945,7 @@ void Server::slot_playData(int id, int money, bool pass, bool giveup)
     }else{
         if(whoNext == firstPassId) emit sig_roundNum(++round);
     }
-    m_sleep(200);
+    m_sleep(300);
     if(isNewRound){
         whoNext = whoCall;
         while(inDesk[whoNext] == 0){
