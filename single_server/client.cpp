@@ -12,15 +12,15 @@ Client::Client(QObject *parent) : QTcpSocket(parent)
             this,SLOT(slot_readClient()));
     connect(this,SIGNAL(disconnected()),
             this,SLOT(slot_disconnected()));
-//    connect(this,SIGNAL(connected()),
-//            this,SLOT(slot_connected()));
+    //    connect(this,SIGNAL(connected()),
+    //            this,SLOT(slot_connected()));
 
     nextBlockSize = 0,allMoney = defaultBet,addMoney = 0;
     score = 0,thisRoundAdd = 0;
-//    connect(&timer1,SIGNAL(timeout()),
-//            this,SLOT(slot_overTime()));
-//    connect(&disconTime,SIGNAL(timeout()),
-//            this,SLOT(slot_gameDiscon()));
+    //    connect(&timer1,SIGNAL(timeout()),
+    //            this,SLOT(slot_overTime()));
+    //    connect(&disconTime,SIGNAL(timeout()),
+    //            this,SLOT(slot_gameDiscon()));
 
 
 }
@@ -50,75 +50,77 @@ void Client::slot_readClient()
 {
     QDataStream in(this);
     in.setVersion((QDataStream::Qt_4_8));
-    if(nextBlockSize == 0){
-        if(bytesAvailable()<sizeof(quint16)) return;
+    while(1){
+        if(nextBlockSize == 0){
+            if(bytesAvailable()<sizeof(quint16)) return;
 
-        in >> nextBlockSize;
-    }
+            in >> nextBlockSize;
+        }
 
-    if(bytesAvailable()<nextBlockSize) return;
-    quint8 requestType;
-    bool areYouOk = false/*,isConfirm*/;
-    QByteArray btaChat ;
-    QByteArray tempName;
-    QString str,tempWinnerId;
-    in >> requestType;
-    switch(requestType){
-    case PLAYER_NAME:
-        in >> tempName;
-//        timer1.start(60550);
-        playerName = QString(tempName);
-        emit sig_newPlayer();
-        break;
-    case READY_FLAG:
-        in >> areYouOk;
-        if(areYouOk){
-            emit sig_isReady(playerName);
-        }
-        break;
-    case PLAYDATA:
-        in >> seatId;
-        in >> addMoney >>isPass >>isGiveup;
-        if(isPass){
-            str = playerName+"跳过";
-            emit sig_radioLogText(str.toUtf8());
-        }
-        if(isGiveup){
-            str = playerName+"弃牌";
-            emit sig_radioLogText(str.toUtf8());
-        }
-        if(addMoney != 0){
+        if(bytesAvailable()<nextBlockSize) return;
+        quint8 requestType;
+        bool areYouOk = false/*,isConfirm*/;
+        QByteArray btaChat ;
+        QByteArray tempName;
+        QString str,tempWinnerId;
+        in >> requestType;
+        switch(requestType){
+        case PLAYER_NAME:
+            in >> tempName;
+            //        timer1.start(60550);
+            playerName = QString(tempName);
+            emit sig_newPlayer();
+            break;
+        case READY_FLAG:
+            in >> areYouOk;
+            if(areYouOk){
+                emit sig_isReady(playerName);
+            }
+            break;
+        case PLAYDATA:
+            in >> seatId;
+            in >> addMoney >>isPass >>isGiveup;
+            if(isPass){
+                str = playerName+"跳过";
+                emit sig_radioLogText(str.toUtf8());
+            }
+            if(isGiveup){
+                str = playerName+"弃牌";
+                emit sig_radioLogText(str.toUtf8());
+            }
+            if(addMoney != 0){
+
+            }
+            if(addMoney == 0&&!isPass&&!isGiveup){
+                str = playerName+"跟注";
+                emit sig_radioLogText(str.toUtf8());
+            }
+            emit sig_playData(seatId,addMoney,isPass,isGiveup);
+            break;
+        case WINNER:
+            in >> tempWinnerId;
+            emit sig_winner(tempWinnerId);
+            break;
+
+        case CHAT:
+            in >> btaChat;
+            emit sig_radioChatText(btaChat);
+            break;
+            //    case OVERTIME:
+            //        in >> isConfirm;
+            //        disconTime.stop();
+            //        disconTime.start(70000);
+            //        break;
+
 
         }
-        if(addMoney == 0&&!isPass&&!isGiveup){
-            str = playerName+"跟注";
-            emit sig_radioLogText(str.toUtf8());
-        }
-        emit sig_playData(seatId,addMoney,isPass,isGiveup);
-        break;
-    case WINNER:
-        in >> tempWinnerId;
-        emit sig_winner(tempWinnerId);
-        break;
-
-    case CHAT:
+#if 0
+        QByteArray btaChat /*= readAll()*/;
         in >> btaChat;
         emit sig_radioChatText(btaChat);
-        break;
-//    case OVERTIME:
-//        in >> isConfirm;
-//        disconTime.stop();
-//        disconTime.start(70000);
-//        break;
-
-
-    }
-#if 0
-    QByteArray btaChat /*= readAll()*/;
-    in >> btaChat;
-    emit sig_radioChatText(btaChat);
 #endif
-    nextBlockSize = 0;
+        nextBlockSize = 0;
+    }
 }
 
 void Client::slot_disconnected()
