@@ -53,6 +53,7 @@ private:
     int addMoney,divideMoney;
     QStringList poker/*disconnectName*/,playerList,playerScore;
     bool isANC,isFP,isFirstRun,isNewRound,isPlaying,isRecon;
+    bool isSomeOneLose;
 };
 
 #endif // SERVER_H

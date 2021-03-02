@@ -11,7 +11,7 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     allMoney = 0;
     addMoney = 0;
     winnerId.clear();
-    isANC = false,isFP = true , isFirstRun = true;
+    isANC = false,isFP = true , isFirstRun = true,isSomeOneLose =false;
     isPlaying = false;
     connect(this,SIGNAL(sig_gameBegin()),
             this,SLOT(slot_playGame()));
@@ -593,6 +593,7 @@ void Server::slot_newReady(QString name)
 void Server::slot_disconnected(int desc)
 {
     if(isPlaying){
+        isSomeOneLose =true;
         for(int i = 0;i<ClientList.count();i++){
             if(ClientList[i]->socketDescriptor() == desc){
                 QString str = ClientList[i]->playerName + "中途掉线,请等待";
@@ -734,6 +735,7 @@ void Server::slot_reconnected()
         }
         reconnectedClient.remove(j);
     }
+    isSomeOneLose = false;
 
 }
 
@@ -872,6 +874,8 @@ void Server::slot_playData(int id, int money, bool pass, bool giveup)
         }
         if(inDesknum == 1){
             //游戏结束，放弃结束，不开牌
+
+            isPlaying = false;
             slot_emitLogText("游戏结束");
             //发射结束信号，处理相关数据
             emit sig_gameOver(2);
@@ -1097,6 +1101,11 @@ void Server::slot_gameOver(int status)
     m_sleep(200);
     isPlaying = false;
     //重置数据
+    if(reconnectedClient.count()>0){
+        for(int i = 0;i<reconnectedClient.count();i++){
+            reconnectedClient.remove(i);
+        }
+    }
     round = 1;
     //    allMoney = defaultMoney*ClientList.count();
     //    roundMoney = 0;

@@ -1,6 +1,8 @@
 ﻿#include "poker_client.h"
 #include "ui_poker_client.h"
 
+#include <QDialog>
+
 Poker_Client::Poker_Client(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Poker_Client)
@@ -10,7 +12,7 @@ Poker_Client::Poker_Client(QWidget *parent) :
     nextBlockSize =0;
     addMoney = 0,myCardFlag = 0,puCardFlag = 0;
     isAdd = false,isCall = false ,isNewRound = true,isFirstRun = true;
-    isSending = false;
+    isSending = false,isPause = false;
     score = 0;
     m_name = ui->lineEdit_name->text();
     ui->pushButton_add->setEnabled(false);
@@ -200,9 +202,25 @@ void Poker_Client::slot_readServer()
             break;
         case PAUSE:
             ui->pushButton_winner->setEnabled(false);
+        {
+            pauseDialog = new QDialog(this);
+//            pauseDialog->setWindowTitle("请勿操作");
+            pauseDialog->setFixedSize(310,205);
+//            pauseDialog->setWindowFlags(Qt::FramelessWindowHint);
+            QLabel *label = new QLabel(pauseDialog);
+            label->setText("有人掉线，等待中，<font color=red >请勿进行下注等影响游戏进程的操作</font>（可以聊天），会造成严重的bug，等所有人重连完方可进行下一步操作，所有人重连后将自动关闭本提示窗口！");
+            label->setWordWrap(true);
+            isPause = true;
+            pauseDialog->show();
             break;
+        }
         case CONTINUE:
-            ui->pushButton_winner->setEnabled(true);
+            if(isPause){
+                ui->pushButton_winner->setEnabled(true);
+                pauseDialog->accept();
+                delete pauseDialog;
+                isPause = false;
+            }
             break;
         case OVERFLAG:
         {

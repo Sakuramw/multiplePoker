@@ -7,6 +7,7 @@
 #include <QLabel>
 #include <QKeyEvent>
 #include <QTimer>
+#include <QDialog>
 #define CHAT 100
 #define LOG 101
 #define SEAT 21
@@ -75,11 +76,12 @@ private:
     QString m_name,serverIp;
 //    Player player;
     int addMoney,seatId,turnWho,myCardFlag,puCardFlag;
-    bool isPass,isGiveup,isTurnMy,isAdd,isCall,isNewRound,isFirstRun,isSending;
+    bool isPass,isPause,isGiveup,isTurnMy,isAdd,isCall,isNewRound,isFirstRun,isSending;
     int score,judgeId,port;
     QStringList nameList,playerScore;
     QList<QLabel *> cardLabel;
     QList<QLabel *> pCard;
+    QDialog *pauseDialog;
 };
 
 #endif // POKER_CLIENT_H
