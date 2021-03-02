@@ -20,6 +20,8 @@
 #define OVERTIME 102
 #define SCORELIST 14
 #define PLAYERLIST 13
+#define PAUSE 37
+#define CONTINUE 38
 
 namespace Ui {
 class Poker_Client;
@@ -32,11 +34,12 @@ class Poker_Client : public QWidget
 public:
     explicit Poker_Client(QWidget *parent = 0);
     ~Poker_Client();
-    void keyPressEvent(QKeyEvent *event);
+//    void keyPressEvent(QKeyEvent *event);
 public slots:
     void slot_readServer();
     void slot_connected();
     void slot_disconnected();
+    void slot_quicklyMessage(QString str);
 //    void slot_loseConnect();
 //    void slot_turnMy();
 //    void slot_gameOver();
@@ -71,11 +74,10 @@ private:
     quint16 nextBlockSize;
     QString m_name,serverIp;
 //    Player player;
-    int allMoney,addMoney,seatId,turnWho,myCardFlag,puCardFlag;
+    int addMoney,seatId,turnWho,myCardFlag,puCardFlag;
     bool isPass,isGiveup,isTurnMy,isAdd,isCall,isNewRound,isFirstRun,isSending;
     int score,judgeId,port;
     QStringList nameList,playerScore;
-    QTimer disconTimer;
     QList<QLabel *> cardLabel;
     QList<QLabel *> pCard;
 };

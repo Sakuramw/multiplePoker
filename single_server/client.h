@@ -11,6 +11,7 @@ class Client : public QTcpSocket
 public:
     explicit Client(QObject *parent = 0);
     ~Client();
+    Client &operator= (const Client & other);
 public slots:
     void slot_readClient();
     void slot_disconnected();

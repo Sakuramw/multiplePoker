@@ -27,13 +27,23 @@ Client::Client(QObject *parent) : QTcpSocket(parent)
 
 Client::~Client()
 {
-//    disconnect(&timer1,SIGNAL(timeout()),
-//            this,SLOT(slot_overTime()));
-//    disconnect(&disconTime,SIGNAL(timeout()),
-//            this,SLOT(slot_gameDiscon()));
-//    timer1.stop();
-//    disconTime.stop();
 }
+
+Client &Client::operator=(const Client &other)
+{
+    nextBlockSize = other.nextBlockSize;
+    playerName = other.playerName;
+    winnerId = other.winnerId;
+    allMoney = other.allMoney;
+    thisRoundAdd = other.thisRoundAdd;
+    isPass = other.isPass;
+    isGiveup = other.isGiveup;
+    seatId = other.seatId;
+    defaultBet = other.defaultBet;
+    score = other.score;
+    return *this;
+}
+
 
 
 void Client::slot_readClient()

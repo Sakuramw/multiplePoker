@@ -8,7 +8,7 @@ Poker_Client::Poker_Client(QWidget *parent) :
     ui->setupUi(this);
     tcpsocket = new QTcpSocket();
     nextBlockSize =0;
-    allMoney = 0,addMoney = 0,myCardFlag = 0,puCardFlag = 0;
+    addMoney = 0,myCardFlag = 0,puCardFlag = 0;
     isAdd = false,isCall = false ,isNewRound = true,isFirstRun = true;
     isSending = false;
     score = 0;
@@ -26,8 +26,18 @@ Poker_Client::Poker_Client(QWidget *parent) :
             this,SLOT(slot_connected()));
     connect(tcpsocket,SIGNAL(disconnected()),
             this,SLOT(slot_disconnected()));
-//    connect(&disconTimer,SIGNAL(timeout()),
-//            this,SLOT(slot_loseConnect()));
+    connect(ui->lineEdit_lelaoji,SIGNAL(returnPressed()),
+            this,SLOT(on_pushButton_send_clicked()));
+    connect(ui->lineEdit_name,SIGNAL(returnPressed()),
+            this,SLOT(on_pushButton_join_clicked()));
+    connect(ui->lineEdit_money,SIGNAL(returnPressed()),
+            this,SLOT(on_pushButton_add_clicked()));
+    connect(ui->lineEdit_winner,SIGNAL(returnPressed()),
+            this,SLOT(on_pushButton_winner_clicked()));
+    connect(ui->comboBox_quicklyMessage,SIGNAL(activated(QString)),
+            this,SLOT(slot_quicklyMessage(QString)));
+    //    connect(&disconTimer,SIGNAL(timeout()),
+    //            this,SLOT(slot_loseConnect()));
     //        QString test = "♦A";
     //        if(test.contains("♦")){
     //            ui->label_card1->setText("<font color = red>" + test + "</font>");
@@ -54,177 +64,193 @@ Poker_Client::~Poker_Client()
     delete ui;
 }
 
-void Poker_Client::keyPressEvent(QKeyEvent *event)
-{
-    if(event->key() == Qt::Key_Enter){
-        on_pushButton_send_clicked();
-    }
-}
+//void Poker_Client::keyPressEvent(QKeyEvent *event)
+//{
+//    if(event->key() == Qt::Key_Enter){
+//        on_pushButton_send_clicked();
+//    }
+//}
 
 void Poker_Client::slot_readServer()
 {
 #if 1
     QDataStream in(tcpsocket);
     in.setVersion((QDataStream::Qt_4_8));
-    if(nextBlockSize == 0){
-        if(tcpsocket->bytesAvailable()<sizeof(quint16)) return;
-        in >> nextBlockSize;
-    }
+    while(1){
+        if(nextBlockSize == 0){
+            if(tcpsocket->bytesAvailable()<sizeof(quint16)) return;
+            in >> nextBlockSize;
+        }
 
-    if(tcpsocket->bytesAvailable()<nextBlockSize) return;
-    quint8 requestType;
-    int tempId;
-//    bool isConfirm;
-    QByteArray tempChat,tempLog;
-    QString str,tempCard,tempName,otherCard1,otherCard2;
-    in >> requestType;
-    switch(requestType){
-    case PLAYERLIST:
-        in >> nameList;
-        ui->tableWidget_playerName->setRowCount(nameList.count());
-        for(int i = 0;i<nameList.count();i++){
-            QTableWidgetItem *item = new QTableWidgetItem(nameList[i]);
-            ui->tableWidget_playerName->setItem(i,0,item);
-        }
-        break;
-    case SCORELIST:
-        in >> playerScore;
-        ui->tableWidget_playerName->setRowCount(playerScore.count());
-        for(int i = 0;i<playerScore.count();i++){
-            QTableWidgetItem *item = new QTableWidgetItem(playerScore[i]);
-            ui->tableWidget_playerName->setItem(i,1,item);
-        }
-        break;
-    case SEAT:
-        in >> seatId ;
-        ui->textBrowser_log->append("座位号："+QString::number(seatId));
-        break;
-    case WHOPLAY:
-        in>>turnWho >> isAdd >>isCall;
-        if(turnWho == seatId){
-            if(!isNewRound){
-                if(isAdd){
-                    ui->pushButton_add->setEnabled(true);
-                    ui->pushButton_giveup->setEnabled(true);
-                    ui->pushButton_call->setEnabled(true);
-                }else if(isCall){
-                    ui->pushButton_add->setEnabled(true);
-                    ui->pushButton_giveup->setEnabled(true);
-                    ui->pushButton_call->setEnabled(true);
-                }
-                else{
+        if(tcpsocket->bytesAvailable()<nextBlockSize) return;
+        quint8 requestType;
+        int tempId;
+        //    bool isConfirm;
+        QByteArray tempChat,tempLog;
+        QString str,tempCard,tempName,otherCard1,otherCard2;
+        in >> requestType;
+        switch(requestType){
+        case PLAYERLIST:
+            in >> nameList;
+            ui->tableWidget_playerName->setRowCount(nameList.count());
+            for(int i = 0;i<nameList.count();i++){
+                QTableWidgetItem *item = new QTableWidgetItem(nameList[i]);
+                ui->tableWidget_playerName->setItem(i,0,item);
+            }
+            break;
+        case SCORELIST:
+            in >> playerScore;
+            ui->tableWidget_playerName->setRowCount(playerScore.count());
+            for(int i = 0;i<playerScore.count();i++){
+                QTableWidgetItem *item = new QTableWidgetItem(playerScore[i]);
+                ui->tableWidget_playerName->setItem(i,1,item);
+            }
+            break;
+        case SEAT:
+            in >> seatId ;
+            ui->textBrowser_log->append("座位号："+QString::number(seatId+1));
+            break;
+        case WHOPLAY:
+        {
+            in>>turnWho >> isAdd >>isCall;
+            if(turnWho == seatId){
+                if(!isNewRound){
+                    if(isAdd){
+                        ui->pushButton_add->setEnabled(true);
+                        ui->pushButton_giveup->setEnabled(true);
+                        ui->pushButton_call->setEnabled(true);
+                    }else if(isCall){
+                        ui->pushButton_add->setEnabled(true);
+                        ui->pushButton_giveup->setEnabled(true);
+                        ui->pushButton_call->setEnabled(true);
+                    }
+                    else{
+                        ui->pushButton_add->setEnabled(true);
+                        ui->pushButton_pass->setEnabled(true);
+                        ui->pushButton_giveup->setEnabled(true);
+                    }
+                }else{
                     ui->pushButton_add->setEnabled(true);
                     ui->pushButton_pass->setEnabled(true);
                     ui->pushButton_giveup->setEnabled(true);
                 }
             }else{
-                ui->pushButton_add->setEnabled(true);
-                ui->pushButton_pass->setEnabled(true);
-                ui->pushButton_giveup->setEnabled(true);
+
             }
-        }else{
-
-        }
-        //        for(int i =0;i<myCards.count();++i){
-        //            cardLabel[i]->setText(myCards[i]);
-        //        }
-        isAdd = false;
-        isNewRound = false;
-        break;
-    case MYCARDS:
-        in >> tempCard;
-        cardLabel[myCardFlag++]->setText(tempCard);
-        break;
-    case PUBLICCARD:
-        in >> tempCard;
-        switch (++puCardFlag) {
-        case 1:
-            ui->label_pcard1->setText(tempCard);
-
-            break;
-        case 2:
-            ui->label_pcard2->setText(tempCard);
-            break;
-        case 3:
-            ui->label_pcard3->setText(tempCard);
-            break;
-        case 4:
-            ui->label_pcard4->setText(tempCard);
-            break;
-        case 5:
-            ui->label_pcard5->setText(tempCard);
+            for(int i = 0;i<playerScore.count();i++){
+                QTableWidgetItem *item = new QTableWidgetItem(" ");
+                ui->tableWidget_playerName->setItem(i,2,item);
+            }
+            QTableWidgetItem *item = new QTableWidgetItem("←");
+            ui->tableWidget_playerName->setItem(turnWho,2,item);
+            //        for(int i =0;i<myCards.count();++i){
+            //            cardLabel[i]->setText(myCards[i]);
+            //        }
+            isAdd = false;
+            isNewRound = false;
             break;
         }
-        //        pCard[puCardFlag++]->setText(tempCard);
-        break;
-    case RADIOCARD:
-        in >>tempId >>tempName >> otherCard1 >> otherCard2;
-        str = QString::number(tempId) +"号"+ tempName + "的手牌是：" + otherCard1
-                + "和" + otherCard2;
-        ui->textBrowser_log->append(str);
+        case MYCARDS:
+            in >> tempCard;
+            cardLabel[myCardFlag++]->setText(tempCard);
+            break;
+        case PUBLICCARD:
+            in >> tempCard;
+            switch (++puCardFlag) {
+            case 1:
+                ui->label_pcard1->setText(tempCard);
 
-        ui->pushButton_add->setEnabled(false);
-        ui->pushButton_giveup->setEnabled(false);
-        ui->pushButton_call->setEnabled(false);
-        ui->pushButton_pass->setEnabled(false);
-        break;
-    case NEWROUND:
-        in >>isNewRound;
-        break;
-    case JUDGE:
-        in>> judgeId;
-        if(judgeId == seatId){
-            ui->lineEdit_winner->show();
-            ui->pushButton_winner->show();
-            ui->label_winner->show();
+                break;
+            case 2:
+                ui->label_pcard2->setText(tempCard);
+                break;
+            case 3:
+                ui->label_pcard3->setText(tempCard);
+                break;
+            case 4:
+                ui->label_pcard4->setText(tempCard);
+                break;
+            case 5:
+                ui->label_pcard5->setText(tempCard);
+                break;
+            }
+            //        pCard[puCardFlag++]->setText(tempCard);
+            break;
+        case RADIOCARD:
+            in >>tempId >>tempName >> otherCard1 >> otherCard2;
+            str = QString::number(tempId+1) +"号"+ tempName + "的手牌是：" + otherCard1
+                    + "和" + otherCard2;
+            ui->textBrowser_log->append(str);
+
+            ui->pushButton_add->setEnabled(false);
+            ui->pushButton_giveup->setEnabled(false);
+            ui->pushButton_call->setEnabled(false);
+            ui->pushButton_pass->setEnabled(false);
+            break;
+        case NEWROUND:
+            in >>isNewRound;
+            break;
+        case JUDGE:
+            in>> judgeId;
+            if(judgeId == seatId){
+                ui->lineEdit_winner->show();
+                ui->pushButton_winner->show();
+                ui->label_winner->show();
+            }
+            break;
+        case PAUSE:
+            ui->pushButton_winner->setEnabled(false);
+            break;
+        case CONTINUE:
+            ui->pushButton_winner->setEnabled(true);
+            break;
+        case OVERFLAG:
+        {
+            in >> score;
+            QString str = "你的积分变为：" + QString::number(score);
+            ui->textBrowser_log->append(str);
+            ui->label_score->setText(QString::number(score));
+            addMoney = 0;
+            myCardFlag = 0,puCardFlag = 0;
+            ui->pushButton_ready->show();
         }
-        break;
-    case OVERFLAG:
-    {
-        in >> score;
-        QString str = "你的积分变为：" + QString::number(score);
-        ui->textBrowser_log->append(str);
-        ui->label_score->setText(QString::number(score));
-        allMoney = 0,addMoney = 0;
-        myCardFlag = 0,puCardFlag = 0;
-        ui->pushButton_ready->show();
-    }
-        break;
-    case CHAT:
-        in >> tempChat;
-        ui->textBrowser_lelaoji->append(QString(tempChat));
-        break;
-    case LOG:
-        in >> tempLog;
-        ui->textBrowser_log->append(QString(tempLog));
-        break;
-//    case OVERTIME:
-//        in >> isConfirm;
-//        disconTimer.stop();
-//        disconTimer.start(75050);
-//    {
-//        while(isSending){
+            break;
+        case CHAT:
+            in >> tempChat;
+            ui->textBrowser_lelaoji->append(QString(tempChat));
+            break;
+        case LOG:
+            in >> tempLog;
+            ui->textBrowser_log->append(QString(tempLog));
+            break;
+            //    case OVERTIME:
+            //        in >> isConfirm;
+            //        disconTimer.stop();
+            //        disconTimer.start(75050);
+            //    {
+            //        while(isSending){
 
-//        }
-//        QByteArray block;
-//        QDataStream out(&block,QIODevice::ReadWrite);
-//        out.setVersion(QDataStream::Qt_4_8);
-//        out << quint16(0) << quint8(102) <<bool(true);
-//        out.device() ->seek(0);
-//        out<<quint16(block.size()-sizeof(quint16));
-//        tcpsocket->write(block);
-//        tcpsocket->waitForBytesWritten();
-//    }
-//        break;
-    }
+            //        }
+            //        QByteArray block;
+            //        QDataStream out(&block,QIODevice::ReadWrite);
+            //        out.setVersion(QDataStream::Qt_4_8);
+            //        out << quint16(0) << quint8(102) <<bool(true);
+            //        out.device() ->seek(0);
+            //        out<<quint16(block.size()-sizeof(quint16));
+            //        tcpsocket->write(block);
+            //        tcpsocket->waitForBytesWritten();
+            //    }
+            //        break;
+        }
 
 #endif
 #if 0
-    QByteArray block = tcpsocket->readAll();
-    ui->textBrowser_lelaoji->append(QString(block)+"flag");
+        QByteArray block = tcpsocket->readAll();
+        ui->textBrowser_lelaoji->append(QString(block)+"flag");
 #endif
 
-    nextBlockSize = 0;
+        nextBlockSize = 0;
+    }
 }
 
 void Poker_Client::slot_connected()
@@ -249,10 +275,25 @@ void Poker_Client::slot_connected()
 
 void Poker_Client::slot_disconnected()
 {
-    ui->textBrowser_log->append("因为网络或者服务器原因，你已断开连接，请重启软件重连"
-                                "（如果正在对局中，请勿修改名字！！！）");
-//    ui->lineEdit_name->show();
-//    ui->pushButton_join->show();
+    ui->textBrowser_log->append("因为网络或者服务器原因，你已断开连接");
+    //    ui->lineEdit_name->show();
+    //    ui->pushButton_join->show();
+}
+
+void Poker_Client::slot_quicklyMessage(QString str)
+{
+    QString strLelaoji = str;
+    strLelaoji = m_name + "：" + strLelaoji;
+    isSending = true;
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_8);
+    out << quint16(0) << quint8(100) <<strLelaoji.toUtf8() ;
+    out.device() ->seek(0);
+    out<<quint16(block.size()-sizeof(quint16));
+    tcpsocket->write(block);
+    tcpsocket->waitForBytesWritten();
+    isSending = false;
 }
 
 //void Poker_Client::slot_loseConnect()
@@ -319,7 +360,7 @@ void Poker_Client::on_pushButton_ready_clicked()
     isSending = false;
     ui->pushButton_ready->hide();
     if(isFirstRun){
-//        disconTimer.start(5501);
+        //        disconTimer.start(5501);
         isFirstRun = false;
     }
 
@@ -333,7 +374,6 @@ void Poker_Client::on_pushButton_add_clicked()
         ui->textBrowser_log->append("加注只能在此基础上继续增加，如果你想跟，请按下方的 跟 按钮！");
     }else{
         addMoney = ui->lineEdit_money->text().toInt();
-        allMoney += addMoney;
         ui->lineEdit_money->clear();
         isSending = true;
         QByteArray block;

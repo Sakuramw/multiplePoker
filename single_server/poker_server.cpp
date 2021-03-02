@@ -1,6 +1,8 @@
 ﻿#include "poker_server.h"
 #include "ui_poker_server.h"
 
+#include <QTime>
+
 Poker_Server::Poker_Server(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::Poker_Server)
@@ -29,6 +31,7 @@ void Poker_Server::slot_updateChat(QString str)
 
 void Poker_Server::slot_updateLog(QString str)
 {
+    str = QTime::currentTime().toString("hh:mm:ss") + " " + str;
     ui->textBrowser_log->append(str);
 }
 
