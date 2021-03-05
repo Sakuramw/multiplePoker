@@ -1,10 +1,12 @@
 ﻿#include "client.h"
-#define CHAT 100
-#define PLAYER_NAME 11
-#define READY_FLAG 12
-#define PLAYDATA 31
-#define WINNER  43
-#define OVERTIME 102
+//#define CHAT 100
+//#define PLAYER_NAME 11
+//#define READY_FLAG 12
+//#define PLAYDATA 31
+//#define WINNER  43
+//#define OVERTIME 102
+
+
 
 Client::Client(QObject *parent) : QTcpSocket(parent)
 {

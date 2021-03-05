@@ -31,6 +31,14 @@ signals:
 
 public slots:
 public:
+    enum S2C_comPro {
+        PLAYER_NAME = 11,
+        READY_FLAG,
+        PLAYDATA = 31,
+        WINNER = 43,
+        CHAT = 100,
+        OVERTIME = 102
+    };
     quint16 nextBlockSize;
     QString playerName,winnerId;
     int allMoney,addMoney;

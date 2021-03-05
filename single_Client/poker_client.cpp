@@ -154,10 +154,16 @@ void Poker_Client::slot_readServer()
         }
         case MYCARDS:
             in >> tempCard;
+            if(tempCard.contains("♥") || tempCard.contains("♦")){
+                tempCard = "<font color = red>" + tempCard +"</font>";
+            }
             cardLabel[myCardFlag++]->setText(tempCard);
             break;
         case PUBLICCARD:
             in >> tempCard;
+            if(tempCard.contains("♥") || tempCard.contains("♦")){
+                tempCard = "<font color = red>" + tempCard +"</font>";
+            }
             switch (++puCardFlag) {
             case 1:
                 ui->label_pcard1->setText(tempCard);
@@ -180,6 +186,12 @@ void Poker_Client::slot_readServer()
             break;
         case RADIOCARD:
             in >>tempId >>tempName >> otherCard1 >> otherCard2;
+            if(otherCard1.contains("♥") || otherCard1.contains("♦")){
+                otherCard1 = "<font color = red>" + otherCard1 +"</font>";
+            }
+            if(otherCard2.contains("♥") || otherCard2.contains("♦")){
+                otherCard2 = "<font color = red>" + otherCard2 +"</font>";
+            }
             str = QString::number(tempId+1) +"号"+ tempName + "的手牌是：" + otherCard1
                     + "和" + otherCard2;
             ui->textBrowser_log->append(str);
@@ -204,9 +216,9 @@ void Poker_Client::slot_readServer()
             ui->pushButton_winner->setEnabled(false);
         {
             pauseDialog = new QDialog(this);
-//            pauseDialog->setWindowTitle("请勿操作");
+            //            pauseDialog->setWindowTitle("请勿操作");
             pauseDialog->setFixedSize(310,205);
-//            pauseDialog->setWindowFlags(Qt::FramelessWindowHint);
+            //            pauseDialog->setWindowFlags(Qt::FramelessWindowHint);
             QLabel *label = new QLabel(pauseDialog);
             label->setText("有人掉线，等待中，<font color=red >请勿进行下注等影响游戏进程的操作</font>（可以聊天），会造成严重的bug，等所有人重连完方可进行下一步操作，所有人重连后将自动关闭本提示窗口！");
             label->setWordWrap(true);

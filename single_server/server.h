@@ -21,6 +21,7 @@ public:
     void newRound();
     QVector<Client* > ClientList;
     QVector<Client* > reconnectedClient;
+    quint64 maxCardLevel(QStringList sevCard);
 
 signals:
     void sig_updateLog(QString str);
@@ -51,7 +52,7 @@ private:
     int allMoney,defaultMoney,defaultJudge,whoNext;
 //    int callMoney;
     int addMoney,divideMoney;
-    QStringList poker/*disconnectName*/,playerList,playerScore;
+    QStringList poker,playerList,playerScore;
     bool isANC,isFP,isFirstRun,isNewRound,isPlaying,isRecon;
     bool isSomeOneLose;
 };
