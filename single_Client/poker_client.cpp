@@ -2,6 +2,7 @@
 #include "ui_poker_client.h"
 
 #include <QDialog>
+#include <QMessageBox>
 
 Poker_Client::Poker_Client(QWidget *parent) :
     QWidget(parent),
@@ -10,7 +11,7 @@ Poker_Client::Poker_Client(QWidget *parent) :
     ui->setupUi(this);
     tcpsocket = new QTcpSocket();
     nextBlockSize =0;
-    addMoney = 0,myCardFlag = 0,puCardFlag = 0;
+    addMoney = 0,myCardFlag = 0,puCardFlag = 0,countTime = 14;
     isAdd = false,isCall = false ,isNewRound = true,isFirstRun = true;
     isSending = false,isPause = false;
     score = 0;
@@ -38,6 +39,9 @@ Poker_Client::Poker_Client(QWidget *parent) :
             this,SLOT(on_pushButton_winner_clicked()));
     connect(ui->comboBox_quicklyMessage,SIGNAL(activated(QString)),
             this,SLOT(slot_quicklyMessage(QString)));
+    connect(&countDown,SIGNAL(timeout()),
+            this,SLOT(slot_countDown()));
+
     //    connect(&disconTimer,SIGNAL(timeout()),
     //            this,SLOT(slot_loseConnect()));
     //        QString test = "♦A";
@@ -56,6 +60,7 @@ Poker_Client::Poker_Client(QWidget *parent) :
     ui->lineEdit_winner->hide();
     ui->pushButton_winner->hide();
     ui->label_winner->hide();
+    ui->lcdNumber_countDown->hide();
     ui->label_score->setText(QString::number(score));
 
 
@@ -66,12 +71,22 @@ Poker_Client::~Poker_Client()
     delete ui;
 }
 
-//void Poker_Client::keyPressEvent(QKeyEvent *event)
-//{
-//    if(event->key() == Qt::Key_Enter){
-//        on_pushButton_send_clicked();
-//    }
-//}
+void Poker_Client::keyPressEvent(QKeyEvent *event)
+{
+    //当按下ctrl+r则跳出提示框.
+       if (event->modifiers() & Qt::ControlModifier)
+       {
+           if (event->key() == Qt::Key_R)
+               QMessageBox::information(this,"规则", "<font size = 5>同花顺</font><font color = red size = 5>(A2345)</font><br>五张同花色的连续牌<br>"
+                                                   "<font size = 5>四条/炸弹(6666)</font><br>其中四张是相同点数但不同花的扑克牌，第五张是随意的一张牌<br>"
+                                                   "<font size = 5>葫芦(33388)</font><br>三张相同点数及任何两张其他相同点数的扑克牌<br>"
+                                                   "<font size = 5>同花</font><font color = red size = 5>(3569A)</font><br>此牌由五张不按顺序但相同花的扑克牌组成<br>"
+                                                   "<font size = 5>顺子(23456)</font><br>此牌由五张顺序扑克牌组成<br>"
+                                                   "<font size = 5>三条(3335A)</font><br>由三张相同点数和两张不同点数的扑克组成<br>"
+                                                   "<font size = 5>两对(6699A)</font><br>两对点数相同但两两不同的扑克和随意的一张牌组成<br>"
+                                                   "<font size = 5>一对(2268A)</font><br>由两张相同点数的扑克牌和另三张随意的牌组成高牌既不是同一花色也不是同一点数的五张牌组成。<br>");
+       }
+}
 
 void Poker_Client::slot_readServer()
 {
@@ -90,6 +105,7 @@ void Poker_Client::slot_readServer()
         //    bool isConfirm;
         QByteArray tempChat,tempLog;
         QString str,tempCard,tempName,otherCard1,otherCard2;
+        QVector<int > readyId;
         in >> requestType;
         switch(requestType){
         case PLAYERLIST:
@@ -108,6 +124,15 @@ void Poker_Client::slot_readServer()
                 ui->tableWidget_playerName->setItem(i,1,item);
             }
             break;
+        case NEWREADY:
+            in >>readyId;
+            for(int i = 0;i<readyId.count();i++){
+                if(readyId[i] == 1){
+                    QTableWidgetItem *item = new QTableWidgetItem("已准备");
+                    ui->tableWidget_playerName->setItem(i,2,item);
+                }
+            }
+            break;
         case SEAT:
             in >> seatId ;
             ui->textBrowser_log->append("座位号："+QString::number(seatId+1));
@@ -116,6 +141,10 @@ void Poker_Client::slot_readServer()
         {
             in>>turnWho >> isAdd >>isCall;
             if(turnWho == seatId){
+                countTime = 14;
+                ui->lcdNumber_countDown->display(15);
+                ui->lcdNumber_countDown->show();
+                countDown.start(1000);
                 if(!isNewRound){
                     if(isAdd){
                         ui->pushButton_add->setEnabled(true);
@@ -220,7 +249,8 @@ void Poker_Client::slot_readServer()
             pauseDialog->setFixedSize(310,205);
             //            pauseDialog->setWindowFlags(Qt::FramelessWindowHint);
             QLabel *label = new QLabel(pauseDialog);
-            label->setText("有人掉线，等待中，<font color=red >请勿进行下注等影响游戏进程的操作</font>（可以聊天），会造成严重的bug，等所有人重连完方可进行下一步操作，所有人重连后将自动关闭本提示窗口！");
+            label->setText("有人掉线，等待中，<font color=red >请勿进行下注等影响游戏进程的操作</font>（可以聊天），"
+                           "否则会造成严重的bug，等所有人重连完方可进行下一步操作，所有人重连后将自动关闭本提示窗口！");
             label->setWordWrap(true);
             isPause = true;
             pauseDialog->show();
@@ -244,6 +274,10 @@ void Poker_Client::slot_readServer()
             myCardFlag = 0,puCardFlag = 0;
             ui->pushButton_ready->show();
         }
+            for(int i = 0;i<playerScore.count();i++){
+                QTableWidgetItem *item = new QTableWidgetItem(" ");
+                ui->tableWidget_playerName->setItem(i,2,item);
+            }
             break;
         case CHAT:
             in >> tempChat;
@@ -324,6 +358,12 @@ void Poker_Client::slot_quicklyMessage(QString str)
     tcpsocket->write(block);
     tcpsocket->waitForBytesWritten();
     isSending = false;
+}
+
+void Poker_Client::slot_countDown()
+{
+    ui->lcdNumber_countDown->display(countTime);
+    if(countTime) countTime--;
 }
 
 //void Poker_Client::slot_loseConnect()
@@ -420,8 +460,11 @@ void Poker_Client::on_pushButton_add_clicked()
         ui->pushButton_pass->setEnabled(false);
         ui->pushButton_giveup->setEnabled(false);
         ui->pushButton_call->setEnabled(false);
+        ui->lcdNumber_countDown->hide();
+        countDown.stop();
         isNewRound = false;
     }
+
 }
 
 void Poker_Client::on_pushButton_pass_clicked()
@@ -441,6 +484,8 @@ void Poker_Client::on_pushButton_pass_clicked()
     ui->pushButton_pass->setEnabled(false);
     ui->pushButton_giveup->setEnabled(false);
     ui->pushButton_call->setEnabled(false);
+    ui->lcdNumber_countDown->hide();
+    countDown.stop();
     isNewRound = false;
 
 }
@@ -462,6 +507,8 @@ void Poker_Client::on_pushButton_giveup_clicked()
     ui->pushButton_pass->setEnabled(false);
     ui->pushButton_giveup->setEnabled(false);
     ui->pushButton_call->setEnabled(false);
+    ui->lcdNumber_countDown->hide();
+    countDown.stop();
     isNewRound = false;
 }
 
@@ -482,6 +529,8 @@ void Poker_Client::on_pushButton_call_clicked()
     ui->pushButton_pass->setEnabled(false);
     ui->pushButton_giveup->setEnabled(false);
     ui->pushButton_call->setEnabled(false);
+    ui->lcdNumber_countDown->hide();
+    countDown.stop();
     isNewRound = false;
 }
 

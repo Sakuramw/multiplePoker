@@ -35,10 +35,11 @@ class Poker_Client : public QWidget
 public:
     explicit Poker_Client(QWidget *parent = 0);
     ~Poker_Client();
-//    void keyPressEvent(QKeyEvent *event);
+    void keyPressEvent(QKeyEvent *event);
     enum C2S_comProt {
         PLAYERLIST = 13,
         SCORELIST,
+        NEWREADY,
         SEAT = 21,
         WHOPLAY,
         MYCARDS,
@@ -58,6 +59,7 @@ public slots:
     void slot_connected();
     void slot_disconnected();
     void slot_quicklyMessage(QString str);
+    void slot_countDown();
 //    void slot_loseConnect();
 //    void slot_turnMy();
 //    void slot_gameOver();
@@ -94,11 +96,12 @@ private:
 //    Player player;
     int addMoney,seatId,turnWho,myCardFlag,puCardFlag;
     bool isPass,isPause,isGiveup,isTurnMy,isAdd,isCall,isNewRound,isFirstRun,isSending;
-    int score,judgeId,port;
+    int score,judgeId,port,countTime;
     QStringList nameList,playerScore;
     QList<QLabel *> cardLabel;
     QList<QLabel *> pCard;
     QDialog *pauseDialog;
+    QTimer countDown;
 };
 
 #endif // POKER_CLIENT_H
