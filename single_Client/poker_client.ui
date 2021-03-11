@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+﻿<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>Poker_Client</class>
  <widget class="QWidget" name="Poker_Client">
@@ -9,799 +9,545 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>984</width>
-    <height>577</height>
+    <width>1000</width>
+    <height>634</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>PokerClient</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_12">
-   <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_15">
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_5">
+  <widget class="QLCDNumber" name="lcdNumber_countDown">
+   <property name="geometry">
+    <rect>
+     <x>580</x>
+     <y>10</y>
+     <width>92</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>92</width>
+     <height>50</height>
+    </size>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="mode">
+    <enum>QLCDNumber::Dec</enum>
+   </property>
+   <property name="value" stdset="0">
+    <double>15.000000000000000</double>
+   </property>
+  </widget>
+  <widget class="Line" name="line">
+   <property name="geometry">
+    <rect>
+     <x>550</x>
+     <y>10</y>
+     <width>20</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="orientation">
+    <enum>Qt::Vertical</enum>
+   </property>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>684</x>
+     <y>10</y>
+     <width>301</width>
+     <height>611</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_10">
+    <item>
+     <widget class="QTableWidget" name="tableWidget_playerName">
+      <property name="minimumSize">
+       <size>
+        <width>290</width>
+        <height>350</height>
+       </size>
+      </property>
+      <column>
+       <property name="text">
+        <string>名字</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>积分</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>轮到谁</string>
+       </property>
+      </column>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_9">
+      <item>
+       <widget class="QLabel" name="label_winner">
+        <property name="text">
+         <string>请输入获胜者id（多人用英文逗号隔开,)：</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_11">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_winner"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_winner">
+          <property name="text">
+           <string>确定</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_8">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>请输入你的名字：</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_12">
+        <item>
+         <widget class="QLineEdit" name="lineEdit_name"/>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_join">
+          <property name="text">
+           <string>加入房间</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_13">
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QLabel" name="label_ip">
+          <property name="text">
+           <string>服务器IP：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_ip">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>2</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>3q77570w05.zicp.vip</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <item>
+         <widget class="QLabel" name="label_port">
+          <property name="text">
+           <string>端口：</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit_port">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>1</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>40128</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>342</x>
+     <y>10</y>
+     <width>201</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <item>
+     <widget class="QLabel" name="label_2">
+      <property name="minimumSize">
+       <size>
+        <width>84</width>
+        <height>34</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Agency FB</family>
+        <pointsize>20</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>积分：</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="label_score">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Agency FB</family>
+        <pointsize>20</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>323</width>
+     <height>611</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_5">
+    <item>
+     <widget class="QGroupBox" name="groupBox_log">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>321</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>321</width>
+        <height>1666660</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>日志</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QGroupBox" name="groupBox_log">
+        <widget class="QTextBrowser" name="textBrowser_log">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
-           <width>321</width>
-           <height>321</height>
+           <width>301</width>
+           <height>0</height>
           </size>
          </property>
-         <property name="maximumSize">
-          <size>
-           <width>321</width>
-           <height>321</height>
-          </size>
+         <property name="font">
+          <font>
+           <family>Agency FB</family>
+           <pointsize>14</pointsize>
+          </font>
          </property>
-         <property name="title">
-          <string>日志</string>
-         </property>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QTextBrowser" name="textBrowser_log">
-            <property name="font">
-             <font>
-              <family>Agency FB</family>
-              <pointsize>14</pointsize>
-             </font>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="groupBox_chat">
-         <property name="minimumSize">
-          <size>
-           <width>321</width>
-           <height>211</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>0</width>
-           <height>211</height>
-          </size>
-         </property>
-         <property name="title">
-          <string>了牢记</string>
-         </property>
-         <layout class="QVBoxLayout" name="verticalLayout">
-          <item>
-           <widget class="QTextBrowser" name="textBrowser_lelaoji"/>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox_quicklyMessage">
-            <property name="font">
-             <font>
-              <family>宋体</family>
-              <pointsize>12</pointsize>
-             </font>
-            </property>
-            <item>
-             <property name="text">
-              <string>你是GG还是MM</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>网络一线牵,珍惜这段缘</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>赶紧准备，我要收菜了</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>快点吧，我等到花都谢了！！！</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>这把好牌，稳了！</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>你的牌打的也忒好了吧！</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>和你合作真是太愉快了。</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>别以为有钱了不起啊!</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>sorry, 有钱还真是了不起！下局第一回合就加20看ta跟不跟。加20，加20（笑）</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>你是不是猪派来的卧底</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>不要吵了，不要吵了，专心玩游戏吧</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>当年陈刀仔他能用20块赢到3700万，我今天用20万赢到500万不是问题！</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>手上对A你能秒我？你能秒杀我？！你今天能把我秒了，我！当！场！就把这个电脑屏幕吃掉！！！</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>不要误会，我不是针对你，我是说，在座的各位，都是垃圾</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>你们随便加，不跟算我输</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>这把我闭着眼睛按，按多少下多少注，话放这了，你们随意</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TMD，你这么狂？总有人治得了你，我先跑了</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>又输了，我的心是冰冰的</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>（烟火声）</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>再见了，我会想念大家的</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>ggnb！！！</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>教练……我想入学郊大软件工程</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_4">
-            <item>
-             <widget class="QLineEdit" name="lineEdit_lelaoji"/>
-            </item>
-            <item>
-             <widget class="QPushButton" name="pushButton_send">
-              <property name="text">
-               <string>发送</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
         </widget>
        </item>
       </layout>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_10">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>13</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_11">
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="groupBox_chat">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>321</width>
+        <height>211</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>321</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>了牢记</string>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_14">
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_5">
-           <item>
-            <widget class="QLabel" name="label_2">
-             <property name="minimumSize">
-              <size>
-               <width>84</width>
-               <height>34</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>Agency FB</family>
-               <pointsize>20</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>积分：</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="label_score">
-             <property name="minimumSize">
-              <size>
-               <width>101</width>
-               <height>35</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <family>Agency FB</family>
-               <pointsize>20</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QLCDNumber" name="lcdNumber_countDown">
-             <property name="minimumSize">
-              <size>
-               <width>92</width>
-               <height>50</height>
-              </size>
-             </property>
-             <property name="frameShape">
-              <enum>QFrame::Box</enum>
-             </property>
-             <property name="mode">
-              <enum>QLCDNumber::Dec</enum>
-             </property>
-             <property name="value" stdset="0">
-              <double>15.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="horizontalSpacer_12">
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>40</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QWidget" name="widget_pCard" native="true">
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
-            <item>
-             <widget class="QLabel" name="label_pcard1">
-              <property name="minimumSize">
-               <size>
-                <width>89</width>
-                <height>89</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>20</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_pcard2">
-              <property name="minimumSize">
-               <size>
-                <width>89</width>
-                <height>89</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>20</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_pcard3">
-              <property name="minimumSize">
-               <size>
-                <width>89</width>
-                <height>89</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>20</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <spacer name="horizontalSpacer">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>18</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_pcard4">
-              <property name="minimumSize">
-               <size>
-                <width>89</width>
-                <height>89</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>20</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_2">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>13</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item>
-             <widget class="QLabel" name="label_pcard5">
-              <property name="minimumSize">
-               <size>
-                <width>89</width>
-                <height>89</height>
-               </size>
-              </property>
-              <property name="font">
-               <font>
-                <pointsize>20</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
-               </font>
-              </property>
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="wordWrap">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>18</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-         </layout>
+        <widget class="QTextBrowser" name="textBrowser_lelaoji">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>1</verstretch>
+          </sizepolicy>
+         </property>
         </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <widget class="QComboBox" name="comboBox_quicklyMessage">
+         <property name="font">
+          <font>
+           <family>宋体</family>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
          <item>
-          <widget class="QLineEdit" name="lineEdit_money">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>30</height>
-            </size>
-           </property>
-          </widget>
+          <property name="text">
+           <string>你是GG还是MM</string>
+          </property>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_add">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>75</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true"/>
-           </property>
-           <property name="text">
-            <string>加注</string>
-           </property>
-          </widget>
+          <property name="text">
+           <string>网络一线牵,珍惜这段缘</string>
+          </property>
          </item>
-        </layout>
+         <item>
+          <property name="text">
+           <string>赶紧准备，我要收菜了</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>快点吧，我等到花都谢了！！！</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>这把好牌，稳了！</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>你的牌打的也忒好了吧！</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>和你合作真是太愉快了。</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>别以为有钱了不起啊!</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>sorry, 有钱还真是了不起！下局第一回合就加20看ta跟不跟。加20，加20（笑）</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>你是不是猪派来的卧底</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>不要吵了，不要吵了，专心玩游戏吧</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>当年陈刀仔他能用20块赢到3700万，我今天用20万赢到500万不是问题！</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>手上对A你能秒我？你能秒杀我？！你今天能把我秒了，我！当！场！就把这个电脑屏幕吃掉！！！</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>不要误会，我不是针对你，我是说，在座的各位，都是垃圾</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>你们随便加，不跟算我输</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>这把我闭着眼睛按，按多少下多少注，话放这了，你们随意</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>TMD，你这么狂？总有人治得了你，我先跑了</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>又输了，我的心是冰冰的</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>（烟火声）</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>再见了，我会想念大家的</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>ggnb！！！</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>教练……我想入学郊大软件工程</string>
+          </property>
+         </item>
+        </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_8">
+        <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
-          <widget class="QPushButton" name="pushButton_call">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>75</width>
-             <height>40</height>
-            </size>
-           </property>
+          <widget class="QLineEdit" name="lineEdit_lelaoji"/>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_send">
            <property name="text">
-            <string>跟</string>
+            <string>发送</string>
            </property>
           </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_pass">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>75</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>过</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_5">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_giveup">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>75</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>弃牌</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_10">
-         <item>
-          <spacer name="horizontalSpacer_8">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <widget class="QWidget" name="widget_myCard" native="true">
-             <layout class="QHBoxLayout" name="horizontalLayout">
-              <item>
-               <widget class="QLabel" name="label_card1">
-                <property name="minimumSize">
-                 <size>
-                  <width>89</width>
-                  <height>89</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>20</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::Box</enum>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_card2">
-                <property name="minimumSize">
-                 <size>
-                  <width>89</width>
-                  <height>89</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>20</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="frameShape">
-                 <enum>QFrame::Box</enum>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="wordWrap">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_9">
-             <item>
-              <spacer name="horizontalSpacer_6">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pushButton_ready">
-               <property name="minimumSize">
-                <size>
-                 <width>75</width>
-                 <height>40</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>89</width>
-                 <height>16777215</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>准备</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_7">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_9">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
       </layout>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer_11">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType">
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>13</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" name="verticalLayout_10">
-       <item>
-        <widget class="QTableWidget" name="tableWidget_playerName">
-         <property name="minimumSize">
-          <size>
-           <width>290</width>
-           <height>350</height>
-          </size>
-         </property>
-         <column>
-          <property name="text">
-           <string>名字</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>积分</string>
-          </property>
-         </column>
-         <column>
-          <property name="text">
-           <string>轮到谁</string>
-          </property>
-         </column>
-        </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_9">
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>418</y>
+     <width>331</width>
+     <height>201</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_3">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <item>
+       <spacer name="horizontalSpacer_8">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget_myCard" native="true">
+        <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QLabel" name="label_winner">
+          <widget class="QLabel" name="label_card1">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>89</width>
+             <height>89</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Box</enum>
+           </property>
            <property name="text">
-            <string>请输入获胜者id（多人用英文逗号隔开,)：</string>
+            <string/>
            </property>
            <property name="wordWrap">
             <bool>true</bool>
@@ -809,91 +555,439 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_11">
-           <item>
-            <widget class="QLineEdit" name="lineEdit_winner"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_winner">
-             <property name="text">
-              <string>确定</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_8">
-         <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="label_card2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>89</width>
+             <height>89</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>20</pointsize>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::Box</enum>
+           </property>
            <property name="text">
-            <string>请输入你的名字：</string>
+            <string/>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout_12">
-           <item>
-            <widget class="QLineEdit" name="lineEdit_name"/>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushButton_join">
-             <property name="text">
-              <string>加入房间</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
         </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_13">
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_6">
-           <item>
-            <widget class="QLabel" name="label_ip">
-             <property name="text">
-              <string>服务器IP：</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_ip">
-             <property name="text">
-              <string>3q77570w05.zicp.vip</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" name="verticalLayout_7">
-           <item>
-            <widget class="QLabel" name="label_port">
-             <property name="text">
-              <string>端口：</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLineEdit" name="lineEdit_port">
-             <property name="text">
-              <string>40128</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-  </layout>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_9">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <item>
+       <spacer name="horizontalSpacer_10">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>37</width>
+          <height>17</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_ready">
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>89</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>准备</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_11">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>37</width>
+          <height>17</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="widget_pCard" native="true">
+   <property name="geometry">
+    <rect>
+     <x>342</x>
+     <y>70</y>
+     <width>331</width>
+     <height>206</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
+      <item>
+       <widget class="QLabel" name="label_pcard1">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>89</width>
+          <height>89</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_pcard2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>89</width>
+          <height>89</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_pcard3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>89</width>
+          <height>89</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>18</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_pcard4">
+        <property name="minimumSize">
+         <size>
+          <width>89</width>
+          <height>89</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>13</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_pcard5">
+        <property name="minimumSize">
+         <size>
+          <width>89</width>
+          <height>89</height>
+         </size>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>20</pointsize>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Box</enum>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>18</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QWidget" name="">
+   <property name="geometry">
+    <rect>
+     <x>342</x>
+     <y>282</y>
+     <width>331</width>
+     <height>131</height>
+    </rect>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_11">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QLineEdit" name="lineEdit_money">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>30</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_add">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="text">
+         <string>加注</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
+      <item>
+       <widget class="QPushButton" name="pushButton_call">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>跟</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_pass">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>过</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_giveup">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>75</width>
+          <height>40</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>弃牌</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <zorder>lcdNumber_countDown</zorder>
+  <zorder>label_score</zorder>
+  <zorder>line</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
