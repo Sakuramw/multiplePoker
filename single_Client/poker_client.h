@@ -60,6 +60,7 @@ public slots:
     void slot_disconnected();
     void slot_quicklyMessage(QString str);
     void slot_countDown();
+    void slot_addMoney();
 //    void slot_loseConnect();
 //    void slot_turnMy();
 //    void slot_gameOver();
@@ -86,7 +87,11 @@ private slots:
 
     void on_pushButton_call_clicked();
 
-    void on_pushButton_winner_clicked();
+//    void on_pushButton_winner_clicked();
+
+    void on_checkBox_watchMod_stateChanged(int arg1);
+
+    void on_checkBox_watchEnable_stateChanged(int arg1);
 
 private:
     Ui::Poker_Client *ui;
@@ -102,6 +107,7 @@ private:
     QList<QLabel *> pCard;
     QDialog *pauseDialog;
     QTimer countDown;
+    bool isAddEnable,isWatchMod,isWatchEnable;
 };
 
 #endif // POKER_CLIENT_H

@@ -14,9 +14,11 @@ Poker_Client::Poker_Client(QWidget *parent) :
     addMoney = 0,myCardFlag = 0,puCardFlag = 0,countTime = 14;
     isAdd = false,isCall = false ,isNewRound = true,isFirstRun = true;
     isSending = false,isPause = false;
+    isWatchMod = false,isWatchEnable = false;
     score = 0;
     m_name = ui->lineEdit_name->text();
     ui->pushButton_add->setEnabled(false);
+    isAddEnable = false;
     ui->pushButton_giveup->setEnabled(false);
     ui->pushButton_call->setEnabled(false);
     ui->pushButton_pass->setEnabled(false);
@@ -34,9 +36,9 @@ Poker_Client::Poker_Client(QWidget *parent) :
     connect(ui->lineEdit_name,SIGNAL(returnPressed()),
             this,SLOT(on_pushButton_join_clicked()));
     connect(ui->lineEdit_money,SIGNAL(returnPressed()),
-            this,SLOT(on_pushButton_add_clicked()));
-    connect(ui->lineEdit_winner,SIGNAL(returnPressed()),
-            this,SLOT(on_pushButton_winner_clicked()));
+            this,SLOT(slot_addMoney()));
+//    connect(ui->lineEdit_winner,SIGNAL(returnPressed()),
+//            this,SLOT(on_pushButton_winner_clicked()));
     connect(ui->comboBox_quicklyMessage,SIGNAL(activated(QString)),
             this,SLOT(slot_quicklyMessage(QString)));
     connect(&countDown,SIGNAL(timeout()),
@@ -54,15 +56,16 @@ Poker_Client::Poker_Client(QWidget *parent) :
     QIntValidator* moneyValidator = new QIntValidator;
     moneyValidator->setRange(1, 100);
     ui->lineEdit_money->setValidator(moneyValidator);
-    QRegExp regx("[0-9,]+$");
-    QValidator *winnerValidator = new QRegExpValidator(regx);
-    ui->lineEdit_winner->setValidator(winnerValidator);
-    ui->lineEdit_winner->hide();
-    ui->pushButton_winner->hide();
-    ui->label_winner->hide();
+//    QRegExp regx("[0-9,]+$");
+//    QValidator *winnerValidator = new QRegExpValidator(regx);
+//    ui->lineEdit_winner->setValidator(winnerValidator);
+//    ui->lineEdit_winner->hide();
+//    ui->pushButton_winner->hide();
+//    ui->label_winner->hide();
     ui->lcdNumber_countDown->hide();
     ui->label_score->setText(QString::number(score));
-
+//    ui->checkBox_watchEnable->setEnabled(true);
+//    ui->checkBox_watchEnable->setCheckable(true);
 
 }
 
@@ -148,20 +151,24 @@ void Poker_Client::slot_readServer()
                 if(!isNewRound){
                     if(isAdd){
                         ui->pushButton_add->setEnabled(true);
+                        isAddEnable = true;
                         ui->pushButton_giveup->setEnabled(true);
                         ui->pushButton_call->setEnabled(true);
                     }else if(isCall){
                         ui->pushButton_add->setEnabled(true);
+                        isAddEnable = true;
                         ui->pushButton_giveup->setEnabled(true);
                         ui->pushButton_call->setEnabled(true);
                     }
                     else{
                         ui->pushButton_add->setEnabled(true);
+                        isAddEnable = true;
                         ui->pushButton_pass->setEnabled(true);
                         ui->pushButton_giveup->setEnabled(true);
                     }
                 }else{
                     ui->pushButton_add->setEnabled(true);
+                    isAddEnable = true;
                     ui->pushButton_pass->setEnabled(true);
                     ui->pushButton_giveup->setEnabled(true);
                 }
@@ -226,6 +233,7 @@ void Poker_Client::slot_readServer()
             ui->textBrowser_log->append(str);
 
             ui->pushButton_add->setEnabled(false);
+            isAddEnable = false;
             ui->pushButton_giveup->setEnabled(false);
             ui->pushButton_call->setEnabled(false);
             ui->pushButton_pass->setEnabled(false);
@@ -236,13 +244,13 @@ void Poker_Client::slot_readServer()
         case JUDGE:
             in>> judgeId;
             if(judgeId == seatId){
-                ui->lineEdit_winner->show();
-                ui->pushButton_winner->show();
-                ui->label_winner->show();
+//                ui->lineEdit_winner->show();
+//                ui->pushButton_winner->show();
+//                ui->label_winner->show();
             }
             break;
         case PAUSE:
-            ui->pushButton_winner->setEnabled(false);
+//            ui->pushButton_winner->setEnabled(false);
         {
             pauseDialog = new QDialog(this);
             //            pauseDialog->setWindowTitle("请勿操作");
@@ -258,7 +266,7 @@ void Poker_Client::slot_readServer()
         }
         case CONTINUE:
             if(isPause){
-                ui->pushButton_winner->setEnabled(true);
+//                ui->pushButton_winner->setEnabled(true);
                 pauseDialog->accept();
                 delete pauseDialog;
                 isPause = false;
@@ -324,7 +332,7 @@ void Poker_Client::slot_connected()
     QByteArray block;
     QDataStream out(&block,QIODevice::ReadWrite);
     out.setVersion(QDataStream::Qt_4_8);
-    out << quint16(0) << quint8(11) <<m_name.toUtf8();
+    out << quint16(0) << quint8(11) <<m_name.toUtf8()<<isWatchMod;
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
@@ -335,6 +343,8 @@ void Poker_Client::slot_connected()
     //    ui->label->hide();
     ui->pushButton_join->hide();
     ui->pushButton_ready->setEnabled(true);
+    ui->checkBox_watchEnable->setCheckable(true);
+    ui->checkBox_watchMod->setEnabled(false);
 }
 
 void Poker_Client::slot_disconnected()
@@ -364,6 +374,13 @@ void Poker_Client::slot_countDown()
 {
     ui->lcdNumber_countDown->display(countTime);
     if(countTime) countTime--;
+}
+
+void Poker_Client::slot_addMoney()
+{
+    if(isAddEnable){
+        on_pushButton_add_clicked();
+    }
 }
 
 //void Poker_Client::slot_loseConnect()
@@ -457,6 +474,7 @@ void Poker_Client::on_pushButton_add_clicked()
         tcpsocket->waitForBytesWritten();
         isSending = false;
         ui->pushButton_add->setEnabled(false);
+        isAddEnable = false;
         ui->pushButton_pass->setEnabled(false);
         ui->pushButton_giveup->setEnabled(false);
         ui->pushButton_call->setEnabled(false);
@@ -481,6 +499,7 @@ void Poker_Client::on_pushButton_pass_clicked()
     tcpsocket->waitForBytesWritten();
     isSending = false;
     ui->pushButton_add->setEnabled(false);
+    isAddEnable = false;
     ui->pushButton_pass->setEnabled(false);
     ui->pushButton_giveup->setEnabled(false);
     ui->pushButton_call->setEnabled(false);
@@ -504,6 +523,7 @@ void Poker_Client::on_pushButton_giveup_clicked()
     tcpsocket->waitForBytesWritten();
     isSending = false;
     ui->pushButton_add->setEnabled(false);
+    isAddEnable = false;
     ui->pushButton_pass->setEnabled(false);
     ui->pushButton_giveup->setEnabled(false);
     ui->pushButton_call->setEnabled(false);
@@ -526,6 +546,7 @@ void Poker_Client::on_pushButton_call_clicked()
     tcpsocket->waitForBytesWritten();
     isSending = false;
     ui->pushButton_add->setEnabled(false);
+    isAddEnable = false;
     ui->pushButton_pass->setEnabled(false);
     ui->pushButton_giveup->setEnabled(false);
     ui->pushButton_call->setEnabled(false);
@@ -534,25 +555,51 @@ void Poker_Client::on_pushButton_call_clicked()
     isNewRound = false;
 }
 
-void Poker_Client::on_pushButton_winner_clicked()
+//void Poker_Client::on_pushButton_winner_clicked()
+//{
+//    if(ui->lineEdit_winner->text().isEmpty()){
+//        ui->textBrowser_log->append("获胜者不能为空！");
+//    }else{
+//        isSending = true;
+//        QByteArray block;
+//        QDataStream out(&block,QIODevice::WriteOnly);
+//        out.setVersion(QDataStream::Qt_4_8);
+//        out << quint16(0) << quint8(43) <<ui->lineEdit_winner->text();
+//        out.device() ->seek(0);
+//        out<<quint16(block.size()-sizeof(quint16));
+//        tcpsocket->write(block);
+//        tcpsocket->waitForBytesWritten();
+//        isSending = false;
+//        ui->lineEdit_winner->hide();
+//        ui->lineEdit_winner->clear();
+//        ui->pushButton_winner->hide();
+//        ui->label_winner->hide();
+//    }
+//}
+
+
+void Poker_Client::on_checkBox_watchMod_stateChanged(int arg1)
 {
-    if(ui->lineEdit_winner->text().isEmpty()){
-        ui->textBrowser_log->append("获胜者不能为空！");
+    if(arg1){
+        isWatchMod =true;
     }else{
-        isSending = true;
-        QByteArray block;
-        QDataStream out(&block,QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_4_8);
-        out << quint16(0) << quint8(43) <<ui->lineEdit_winner->text();
-        out.device() ->seek(0);
-        out<<quint16(block.size()-sizeof(quint16));
-        tcpsocket->write(block);
-        tcpsocket->waitForBytesWritten();
-        isSending = false;
-        ui->lineEdit_winner->hide();
-        ui->lineEdit_winner->clear();
-        ui->pushButton_winner->hide();
-        ui->label_winner->hide();
+        isWatchMod = false;
     }
 }
 
+void Poker_Client::on_checkBox_watchEnable_stateChanged(int arg1)
+{
+    if(arg1){
+        isWatchEnable =true;
+    }else{
+        isWatchEnable = false;
+    }
+    QByteArray block;
+    QDataStream out(&block,QIODevice::WriteOnly);
+    out.setVersion(QDataStream::Qt_4_8);
+    out << quint16(0) << quint8(103) <<isWatchEnable;
+    out.device() ->seek(0);
+    out<<quint16(block.size()-sizeof(quint16));
+    tcpsocket->write(block);
+    tcpsocket->waitForBytesWritten();
+}
