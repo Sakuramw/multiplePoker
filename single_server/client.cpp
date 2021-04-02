@@ -16,9 +16,9 @@ Client::Client(QObject *parent) : QTcpSocket(parent)
             this,SLOT(slot_disconnected()));
     //    connect(this,SIGNAL(connected()),
     //            this,SLOT(slot_connected()));
-
+    isEnableWatch = false;
     nextBlockSize = 0,allMoney = defaultBet,addMoney = 0;
-    score = 0,thisRoundAdd = 0;
+    score = 0,thisRoundAdd = 0,watchId = -2;
     //    connect(&timer1,SIGNAL(timeout()),
     //            this,SLOT(slot_overTime()));
     //    connect(&disconTime,SIGNAL(timeout()),
@@ -38,11 +38,14 @@ Client &Client::operator=(const Client &other)
     winnerId = other.winnerId;
     allMoney = other.allMoney;
     thisRoundAdd = other.thisRoundAdd;
+    addMoney = other.addMoney;
     isPass = other.isPass;
     isGiveup = other.isGiveup;
     seatId = other.seatId;
     defaultBet = other.defaultBet;
     score = other.score;
+    isEnableWatch = other.isEnableWatch;
+    watchId = other.watchId;
     return *this;
 }
 
@@ -61,15 +64,17 @@ void Client::slot_readClient()
 
         if(bytesAvailable()<nextBlockSize) return;
         quint8 requestType;
-        bool areYouOk = false/*,isConfirm*/;
+        bool areYouOk = false;
+        int watch;
         QByteArray btaChat ;
         QByteArray tempName;
         QString str,tempWinnerId;
         in >> requestType;
         switch(requestType){
         case PLAYER_NAME:
-            in >> tempName;
+            in >> tempName>>watch;
             //        timer1.start(60550);
+            watchId = watch;
             playerName = QString(tempName);
             emit sig_newPlayer();
             break;

@@ -43,8 +43,8 @@ public:
     QString playerName,winnerId;
     int allMoney,addMoney;
     int thisRoundAdd;
-    bool isPass,isGiveup;
-    int seatId,defaultBet;
+    bool isPass,isGiveup,isEnableWatch;
+    int seatId,defaultBet,watchId;
     int score;
 //    QTimer disconTime,timer1;
 

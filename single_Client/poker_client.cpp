@@ -14,7 +14,7 @@ Poker_Client::Poker_Client(QWidget *parent) :
     addMoney = 0,myCardFlag = 0,puCardFlag = 0,countTime = 14;
     isAdd = false,isCall = false ,isNewRound = true,isFirstRun = true;
     isSending = false,isPause = false;
-    isWatchMod = false,isWatchEnable = false;
+    watchId = -2,isWatchEnable = false;
     score = 0;
     m_name = ui->lineEdit_name->text();
     ui->pushButton_add->setEnabled(false);
@@ -37,8 +37,8 @@ Poker_Client::Poker_Client(QWidget *parent) :
             this,SLOT(on_pushButton_join_clicked()));
     connect(ui->lineEdit_money,SIGNAL(returnPressed()),
             this,SLOT(slot_addMoney()));
-//    connect(ui->lineEdit_winner,SIGNAL(returnPressed()),
-//            this,SLOT(on_pushButton_winner_clicked()));
+    //    connect(ui->lineEdit_winner,SIGNAL(returnPressed()),
+    //            this,SLOT(on_pushButton_winner_clicked()));
     connect(ui->comboBox_quicklyMessage,SIGNAL(activated(QString)),
             this,SLOT(slot_quicklyMessage(QString)));
     connect(&countDown,SIGNAL(timeout()),
@@ -56,16 +56,16 @@ Poker_Client::Poker_Client(QWidget *parent) :
     QIntValidator* moneyValidator = new QIntValidator;
     moneyValidator->setRange(1, 100);
     ui->lineEdit_money->setValidator(moneyValidator);
-//    QRegExp regx("[0-9,]+$");
-//    QValidator *winnerValidator = new QRegExpValidator(regx);
-//    ui->lineEdit_winner->setValidator(winnerValidator);
-//    ui->lineEdit_winner->hide();
-//    ui->pushButton_winner->hide();
-//    ui->label_winner->hide();
+    QRegExp regx("[0-9]+$");
+    QValidator *watchValidator = new QRegExpValidator(regx);
+    ui->lineEdit_watchId->setValidator(watchValidator);
+    //    ui->lineEdit_winner->hide();
+    //    ui->pushButton_winner->hide();
+    //    ui->label_winner->hide();
     ui->lcdNumber_countDown->hide();
     ui->label_score->setText(QString::number(score));
-//    ui->checkBox_watchEnable->setEnabled(true);
-//    ui->checkBox_watchEnable->setCheckable(true);
+    //    ui->checkBox_watchEnable->setEnabled(true);
+    //    ui->checkBox_watchEnable->setCheckable(true);
 
 }
 
@@ -77,18 +77,18 @@ Poker_Client::~Poker_Client()
 void Poker_Client::keyPressEvent(QKeyEvent *event)
 {
     //当按下ctrl+r则跳出提示框.
-       if (event->modifiers() & Qt::ControlModifier)
-       {
-           if (event->key() == Qt::Key_R)
-               QMessageBox::information(this,"规则", "<font size = 5>同花顺</font><font color = red size = 5>(A2345)</font><br>五张同花色的连续牌<br>"
-                                                   "<font size = 5>四条/炸弹(6666)</font><br>其中四张是相同点数但不同花的扑克牌，第五张是随意的一张牌<br>"
-                                                   "<font size = 5>葫芦(33388)</font><br>三张相同点数及任何两张其他相同点数的扑克牌<br>"
-                                                   "<font size = 5>同花</font><font color = red size = 5>(3569A)</font><br>此牌由五张不按顺序但相同花的扑克牌组成<br>"
-                                                   "<font size = 5>顺子(23456)</font><br>此牌由五张顺序扑克牌组成<br>"
-                                                   "<font size = 5>三条(3335A)</font><br>由三张相同点数和两张不同点数的扑克组成<br>"
-                                                   "<font size = 5>两对(6699A)</font><br>两对点数相同但两两不同的扑克和随意的一张牌组成<br>"
-                                                   "<font size = 5>一对(2268A)</font><br>由两张相同点数的扑克牌和另三张随意的牌组成高牌既不是同一花色也不是同一点数的五张牌组成。<br>");
-       }
+    if (event->modifiers() & Qt::ControlModifier)
+    {
+        if (event->key() == Qt::Key_R)
+            QMessageBox::information(this,"规则", "<font size = 5>同花顺</font><font color = red size = 5>(A2345)</font><br>五张同花色的连续牌<br>"
+                                                "<font size = 5>四条/炸弹(6666)</font><br>其中四张是相同点数但不同花的扑克牌，第五张是随意的一张牌<br>"
+                                                "<font size = 5>葫芦(33388)</font><br>三张相同点数及任何两张其他相同点数的扑克牌<br>"
+                                                "<font size = 5>同花</font><font color = red size = 5>(3569A)</font><br>此牌由五张不按顺序但相同花的扑克牌组成<br>"
+                                                "<font size = 5>顺子(23456)</font><br>此牌由五张顺序扑克牌组成<br>"
+                                                "<font size = 5>三条(3335A)</font><br>由三张相同点数和两张不同点数的扑克组成<br>"
+                                                "<font size = 5>两对(6699A)</font><br>两对点数相同但两两不同的扑克和随意的一张牌组成<br>"
+                                                "<font size = 5>一对(2268A)</font><br>由两张相同点数的扑克牌和另三张随意的牌组成高牌既不是同一花色也不是同一点数的五张牌组成。<br>");
+    }
 }
 
 void Poker_Client::slot_readServer()
@@ -244,13 +244,13 @@ void Poker_Client::slot_readServer()
         case JUDGE:
             in>> judgeId;
             if(judgeId == seatId){
-//                ui->lineEdit_winner->show();
-//                ui->pushButton_winner->show();
-//                ui->label_winner->show();
+                //                ui->lineEdit_winner->show();
+                //                ui->pushButton_winner->show();
+                //                ui->label_winner->show();
             }
             break;
         case PAUSE:
-//            ui->pushButton_winner->setEnabled(false);
+            //            ui->pushButton_winner->setEnabled(false);
         {
             pauseDialog = new QDialog(this);
             //            pauseDialog->setWindowTitle("请勿操作");
@@ -266,25 +266,34 @@ void Poker_Client::slot_readServer()
         }
         case CONTINUE:
             if(isPause){
-//                ui->pushButton_winner->setEnabled(true);
+                //                ui->pushButton_winner->setEnabled(true);
                 pauseDialog->accept();
                 delete pauseDialog;
                 isPause = false;
             }
             break;
         case OVERFLAG:
-        {
-            in >> score;
-            QString str = "你的积分变为：" + QString::number(score);
-            ui->textBrowser_log->append(str);
-            ui->label_score->setText(QString::number(score));
-            addMoney = 0;
-            myCardFlag = 0,puCardFlag = 0;
-            ui->pushButton_ready->show();
-        }
-            for(int i = 0;i<playerScore.count();i++){
-                QTableWidgetItem *item = new QTableWidgetItem(" ");
-                ui->tableWidget_playerName->setItem(i,2,item);
+            if(!ui->checkBox_watchMod->isChecked()){
+                in >> score;
+                QString str = "你的积分变为：" + QString::number(score);
+                ui->textBrowser_log->append(str);
+                ui->label_score->setText(QString::number(score));
+                addMoney = 0;
+                myCardFlag = 0,puCardFlag = 0;
+                ui->pushButton_ready->show();
+                for(int i = 0;i<playerScore.count();i++){
+                    QTableWidgetItem *item = new QTableWidgetItem(" ");
+                    ui->tableWidget_playerName->setItem(i,2,item);
+                }
+            }else{
+                in >> score;
+                for(int i = 0;i<pCard.count();i++){
+                    pCard[i]->clear();
+                }
+                for(int i = 0;i<cardLabel.count();i++){
+                    cardLabel[i]->clear();
+                }
+                myCardFlag = 0,puCardFlag = 0;
             }
             break;
         case CHAT:
@@ -329,10 +338,15 @@ void Poker_Client::slot_connected()
 {
     m_name = ui->lineEdit_name->text();
     isSending = true;
+    if(ui->checkBox_watchMod->isChecked()){
+        watchId = ui->lineEdit_watchId->text().toInt()-1;
+    }else{
+        watchId = -2;
+    }
     QByteArray block;
     QDataStream out(&block,QIODevice::ReadWrite);
     out.setVersion(QDataStream::Qt_4_8);
-    out << quint16(0) << quint8(11) <<m_name.toUtf8()<<isWatchMod;
+    out << quint16(0) << quint8(11) <<m_name.toUtf8()<<watchId;
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
     tcpsocket->write(block);
@@ -342,7 +356,11 @@ void Poker_Client::slot_connected()
     ui->lineEdit_name->setEnabled(false);
     //    ui->label->hide();
     ui->pushButton_join->hide();
-    ui->pushButton_ready->setEnabled(true);
+    if(!ui->checkBox_watchMod->isChecked()){
+        ui->pushButton_ready->setEnabled(true);
+    }else{
+        ui->pushButton_ready->show();
+    }
     ui->checkBox_watchEnable->setCheckable(true);
     ui->checkBox_watchMod->setEnabled(false);
 }
@@ -581,9 +599,10 @@ void Poker_Client::on_pushButton_call_clicked()
 void Poker_Client::on_checkBox_watchMod_stateChanged(int arg1)
 {
     if(arg1){
-        isWatchMod =true;
+        ui->lineEdit_watchId->setEnabled(true);
     }else{
-        isWatchMod = false;
+        watchId = -2;
+        ui->lineEdit_watchId->setEnabled(false);
     }
 }
 

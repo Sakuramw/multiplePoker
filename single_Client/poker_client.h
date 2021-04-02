@@ -101,13 +101,13 @@ private:
 //    Player player;
     int addMoney,seatId,turnWho,myCardFlag,puCardFlag;
     bool isPass,isPause,isGiveup,isTurnMy,isAdd,isCall,isNewRound,isFirstRun,isSending;
-    int score,judgeId,port,countTime;
+    int score,judgeId,port,countTime,watchId;
     QStringList nameList,playerScore;
     QList<QLabel *> cardLabel;
     QList<QLabel *> pCard;
     QDialog *pauseDialog;
     QTimer countDown;
-    bool isAddEnable,isWatchMod,isWatchEnable;
+    bool isAddEnable,isWatchEnable;
 };
 
 #endif // POKER_CLIENT_H

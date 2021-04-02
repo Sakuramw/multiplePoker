@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QVector>
 #include <QTcpServer>
+#include <QCoreApplication>
 #include "client.h"
 #define MAXNUM 100
 #define PLAYERLIST 13
@@ -19,8 +20,10 @@ public:
     void shuffleCards();
     void m_sleep(int msec);
     void newRound();
-    QVector<Client* > ClientList;
+    QVector<Client* > playClientList;
     QVector<Client* > reconnectedClient;
+    QVector<Client* > watchClient;
+    QVector<Client* > tempClient;
     quint64 maxCardLevel(QStringList sevCard);
     void winRateTest(int playernum);
 
@@ -53,7 +56,7 @@ private:
     int allMoney,defaultMoney,defaultJudge,whoNext;
 //    int callMoney;
     int addMoney,divideMoney;
-    QStringList poker,playerList,playerScore;
+    QStringList poker,playerList,playerScore,watchList;
     bool isANC,isFP,isFirstRun,isNewRound,isPlaying,isRecon;
     bool isSomeOneLose;
 };

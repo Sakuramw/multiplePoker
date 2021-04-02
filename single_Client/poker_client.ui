@@ -843,39 +843,90 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="layoutWidget">
+  <widget class="QWidget" name="layoutWidget4">
    <property name="geometry">
     <rect>
-     <x>686</x>
+     <x>680</x>
      <y>12</y>
-     <width>301</width>
-     <height>601</height>
+     <width>316</width>
+     <height>611</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_9">
     <item>
-     <widget class="QTableWidget" name="tableWidget_playerName">
-      <property name="minimumSize">
-       <size>
-        <width>290</width>
-        <height>350</height>
-       </size>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
       </property>
-      <column>
-       <property name="text">
-        <string>名字</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>积分</string>
-       </property>
-      </column>
-      <column>
-       <property name="text">
-        <string>轮到谁</string>
-       </property>
-      </column>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>玩家</string>
+       </attribute>
+       <widget class="QTableWidget" name="tableWidget_playerName">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>311</width>
+          <height>461</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>290</width>
+          <height>350</height>
+         </size>
+        </property>
+        <column>
+         <property name="text">
+          <string>名字</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>积分</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>轮到谁</string>
+         </property>
+        </column>
+       </widget>
+       <zorder>tableWidget_playerName</zorder>
+       <zorder>tableWidget_playerName</zorder>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>吃瓜群众</string>
+       </attribute>
+       <widget class="QTableWidget" name="tableWidget_playerName_2">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>311</width>
+          <height>461</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>290</width>
+          <height>350</height>
+         </size>
+        </property>
+        <column>
+         <property name="text">
+          <string>名字</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>围观谁</string>
+         </property>
+        </column>
+       </widget>
+      </widget>
      </widget>
     </item>
     <item>
@@ -894,7 +945,7 @@
          </font>
         </property>
         <property name="text">
-         <string>观战模式</string>
+         <string>观战：</string>
         </property>
         <property name="iconSize">
          <size>
@@ -907,6 +958,16 @@
         </property>
         <property name="tristate">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="lineEdit_watchId">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="text">
+         <string>0</string>
         </property>
        </widget>
       </item>
@@ -1020,7 +1081,7 @@
   <zorder>layoutWidget2</zorder>
   <zorder>layoutWidget3</zorder>
   <zorder>widget_pCard</zorder>
-  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget4</zorder>
   <zorder>lcdNumber_countDown</zorder>
   <zorder>line</zorder>
  </widget>
