@@ -575,7 +575,18 @@ void Server::slot_newPlayer()
         slot_emitLogText(temp.toUtf8());
         watchClient.append(tempClient[tempClient.count()-1]);
         //        tempClient.remove(tempClient.count()-1);
-        watchList.append(tempClient[tempClient.count()-1]->playerName);
+        watchList.append(watchClient[watchClient.count()-1]->playerName);
+        watchPlayerId.append(watchClient[watchClient.count()-1]->watchId);
+        QByteArray block;
+        QDataStream out(&block,QIODevice::WriteOnly);
+        out.setVersion(QDataStream::Qt_4_8);
+        out << quint16(0) << quint8(16) <<watchList<<watchPlayerId;
+        out.device() ->seek(0);
+        out<<quint16(block.size()-sizeof(quint16));
+        for(int i = 0 ;i<tempClient.count();i++){
+            tempClient[i]->write(block);
+            tempClient[i]->waitForBytesWritten();
+        }
     }
 
 
@@ -946,6 +957,33 @@ void Server::slot_disconnected(int desc)
                 playClientList[i]->close();
             }
         }
+        for(int i = 0;i<watchClient.count();++i){
+            if(watchClient[i]->socketDescriptor() == desc){
+                QString str = watchClient[i]->playerName + "退出观战";
+                slot_emitLogText(str.toUtf8());
+
+                for(int j = 0 ;j<tempClient.count();j++){
+                    if(tempClient[j]->socketDescriptor() == desc){
+                        tempClient.remove(j);
+                    }
+                }
+                watchList.removeAt(i);
+                watchPlayerId.remove(i);
+                watchClient.remove(i);
+                watchClient[i]->close();
+
+                QByteArray block;
+                QDataStream out(&block,QIODevice::WriteOnly);
+                out.setVersion(QDataStream::Qt_4_8);
+                out << quint16(0) << quint8(16) <<watchList<<watchPlayerId;
+                out.device() ->seek(0);
+                out<<quint16(block.size()-sizeof(quint16));
+                for(int j = 0 ;j<tempClient.count();j++){
+                    tempClient[j]->write(block);
+                    tempClient[j]->waitForBytesWritten();
+                }
+            }
+        }
 
     }else{
         for(int i = 0;i<playClientList.count();i++){
@@ -961,6 +999,19 @@ void Server::slot_disconnected(int desc)
                 playClientList.remove(i);
                 readyId.remove(i);
                 inDesk.remove(i);
+                QByteArray block;
+                QDataStream out(&block,QIODevice::WriteOnly);
+                out.setVersion(QDataStream::Qt_4_8);
+                out << quint16(0) << quint8(13) <<playerList;
+                out.device() ->seek(0);
+                out<<quint16(block.size()-sizeof(quint16));
+                for(int j = 0 ;j<tempClient.count();j++){
+                    tempClient[j]->write(block);
+                    tempClient[j]->waitForBytesWritten();
+
+                }
+                isFirstRun = true;
+
             }
         }
         for(int i = 0;i<watchClient.count();++i){
@@ -968,8 +1019,19 @@ void Server::slot_disconnected(int desc)
                 QString str = watchClient[i]->playerName + "退出观战";
                 slot_emitLogText(str.toUtf8());
                 watchList.removeAt(i);
+                watchPlayerId.remove(i);
                 watchClient[i]->close();
                 watchClient.remove(i);
+                QByteArray block;
+                QDataStream out(&block,QIODevice::WriteOnly);
+                out.setVersion(QDataStream::Qt_4_8);
+                out << quint16(0) << quint8(16) <<watchList<<watchPlayerId;
+                out.device() ->seek(0);
+                out<<quint16(block.size()-sizeof(quint16));
+                for(int j = 0 ;j<tempClient.count();j++){
+                    tempClient[j]->write(block);
+                    tempClient[j]->waitForBytesWritten();
+                }
             }
         }
         for(int j = 0 ;j<tempClient.count();j++){
@@ -977,18 +1039,7 @@ void Server::slot_disconnected(int desc)
                 tempClient.remove(j);
             }
         }
-        QByteArray block;
-        QDataStream out(&block,QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_4_8);
-        out << quint16(0) << quint8(13) <<playerList;
-        out.device() ->seek(0);
-        out<<quint16(block.size()-sizeof(quint16));
-        for(int i = 0 ;i<tempClient.count();i++){
-            tempClient[i]->write(block);
-            tempClient[i]->waitForBytesWritten();
 
-        }
-        isFirstRun = true;
     }
 
 }
@@ -1373,22 +1424,37 @@ void Server::slot_playData(int id, int money, bool pass, bool giveup)
     }
 
     if(giveup){
-        QByteArray block;
-        QDataStream out(&block,QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_4_8);
-        if(!isANC){
-            out << quint16(0) << quint8(22) <<whoNext<<bool(false)<<bool(false);
-        }else{
-            out << quint16(0) << quint8(22) <<whoNext<<bool(false)<<bool(true);
-        }
-        out.device() ->seek(0);
-        out<<quint16(block.size()-sizeof(quint16));
-        for(int i = 0;i<playClientList.count();i++){
 
-            playClientList[i]->write(block);
-            playClientList[i]->waitForBytesWritten();
+//        m_sleep(1000);
+        {
+            QByteArray block;
+            QDataStream out(&block,QIODevice::WriteOnly);
+            out.setVersion(QDataStream::Qt_4_8);
+            if(!isANC){
+                out << quint16(0) << quint8(22) <<whoNext<<bool(false)<<bool(false);
+            }else{
+                out << quint16(0) << quint8(22) <<whoNext<<bool(false)<<bool(true);
+            }
+            out.device() ->seek(0);
+            out<<quint16(block.size()-sizeof(quint16));
+            for(int i = 0;i<playClientList.count();i++){
+                playClientList[i]->write(block);
+                playClientList[i]->waitForBytesWritten();
+            }
         }
 
+        {
+            QByteArray block;
+            QDataStream out(&block,QIODevice::WriteOnly);
+            out.setVersion(QDataStream::Qt_4_8);
+            out << quint16(0) << quint8(24)<<id;
+            out.device() ->seek(0);
+            out<<quint16(block.size()-sizeof(quint16));
+            for(int i = 0;i<tempClient.count();i++){
+                tempClient[i]->write(block);
+                tempClient[i]->waitForBytesWritten();
+            }
+        }
     }
     if(money == 0&&!giveup){
         QByteArray block;

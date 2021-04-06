@@ -40,9 +40,11 @@ public:
         PLAYERLIST = 13,
         SCORELIST,
         NEWREADY,
+        WATCHLIST,
         SEAT = 21,
         WHOPLAY,
         MYCARDS,
+        GIVEUP,
         PUBLICCARD = 33,
         RADIOCARD,
         NEWROUND,
@@ -102,7 +104,8 @@ private:
     int addMoney,seatId,turnWho,myCardFlag,puCardFlag;
     bool isPass,isPause,isGiveup,isTurnMy,isAdd,isCall,isNewRound,isFirstRun,isSending;
     int score,judgeId,port,countTime,watchId;
-    QStringList nameList,playerScore;
+    QStringList nameList,playerScore,watchList;
+    QVector<int > watchPlayerId;
     QList<QLabel *> cardLabel;
     QList<QLabel *> pCard;
     QDialog *pauseDialog;

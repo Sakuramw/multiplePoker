@@ -893,14 +893,12 @@
          </property>
         </column>
        </widget>
-       <zorder>tableWidget_playerName</zorder>
-       <zorder>tableWidget_playerName</zorder>
       </widget>
       <widget class="QWidget" name="tab_2">
        <attribute name="title">
         <string>吃瓜群众</string>
        </attribute>
-       <widget class="QTableWidget" name="tableWidget_playerName_2">
+       <widget class="QTableWidget" name="tableWidget_watchName">
         <property name="geometry">
          <rect>
           <x>0</x>

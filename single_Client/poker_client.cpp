@@ -104,7 +104,7 @@ void Poker_Client::slot_readServer()
 
         if(tcpsocket->bytesAvailable()<nextBlockSize) return;
         quint8 requestType;
-        int tempId;
+        int tempId,whoGiveup;
         //    bool isConfirm;
         QByteArray tempChat,tempLog;
         QString str,tempCard,tempName,otherCard1,otherCard2;
@@ -115,25 +115,30 @@ void Poker_Client::slot_readServer()
             in >> nameList;
             ui->tableWidget_playerName->setRowCount(nameList.count());
             for(int i = 0;i<nameList.count();i++){
-                QTableWidgetItem *item = new QTableWidgetItem(nameList[i]);
-                ui->tableWidget_playerName->setItem(i,0,item);
+                ui->tableWidget_playerName->setItem(i,0,new QTableWidgetItem(nameList[i]));
             }
             break;
         case SCORELIST:
             in >> playerScore;
             ui->tableWidget_playerName->setRowCount(playerScore.count());
             for(int i = 0;i<playerScore.count();i++){
-                QTableWidgetItem *item = new QTableWidgetItem(playerScore[i]);
-                ui->tableWidget_playerName->setItem(i,1,item);
+                ui->tableWidget_playerName->setItem(i,1,new QTableWidgetItem(playerScore[i]));
             }
             break;
         case NEWREADY:
             in >>readyId;
             for(int i = 0;i<readyId.count();i++){
                 if(readyId[i] == 1){
-                    QTableWidgetItem *item = new QTableWidgetItem("已准备");
-                    ui->tableWidget_playerName->setItem(i,2,item);
+                    ui->tableWidget_playerName->setItem(i,2,new QTableWidgetItem("已准备"));
                 }
+            }
+            break;
+        case WATCHLIST:
+            in >> watchList >>watchPlayerId;
+            ui->tableWidget_watchName->setRowCount(watchList.count());
+            for(int i = 0;i<watchList.count();i++){
+                ui->tableWidget_watchName->setItem(i,0,new QTableWidgetItem(watchList[i]));
+                ui->tableWidget_watchName->setItem(i,1,new QTableWidgetItem(QString::number(watchPlayerId[i]+1)));
             }
             break;
         case SEAT:
@@ -176,11 +181,11 @@ void Poker_Client::slot_readServer()
 
             }
             for(int i = 0;i<playerScore.count();i++){
-                QTableWidgetItem *item = new QTableWidgetItem(" ");
-                ui->tableWidget_playerName->setItem(i,2,item);
+                if(ui->tableWidget_playerName->item(i,2)->text() == "←"){
+                    ui->tableWidget_playerName->setItem(i,2,new QTableWidgetItem(" "));
+                }
             }
-            QTableWidgetItem *item = new QTableWidgetItem("←");
-            ui->tableWidget_playerName->setItem(turnWho,2,item);
+            ui->tableWidget_playerName->setItem(turnWho,2,new QTableWidgetItem("←"));
             //        for(int i =0;i<myCards.count();++i){
             //            cardLabel[i]->setText(myCards[i]);
             //        }
@@ -194,6 +199,14 @@ void Poker_Client::slot_readServer()
                 tempCard = "<font color = red>" + tempCard +"</font>";
             }
             cardLabel[myCardFlag++]->setText(tempCard);
+            for(int i = 0;i<playerScore.count();i++){
+                ui->tableWidget_playerName->setItem(i,2,new QTableWidgetItem(" "));
+
+            }
+            break;
+        case GIVEUP:
+            in >> whoGiveup;
+            ui->tableWidget_playerName->setItem(whoGiveup,2,new QTableWidgetItem("已弃牌"));
             break;
         case PUBLICCARD:
             in >> tempCard;
@@ -203,7 +216,6 @@ void Poker_Client::slot_readServer()
             switch (++puCardFlag) {
             case 1:
                 ui->label_pcard1->setText(tempCard);
-
                 break;
             case 2:
                 ui->label_pcard2->setText(tempCard);
@@ -359,10 +371,11 @@ void Poker_Client::slot_connected()
     if(!ui->checkBox_watchMod->isChecked()){
         ui->pushButton_ready->setEnabled(true);
     }else{
-        ui->pushButton_ready->show();
+        ui->pushButton_ready->hide();
     }
     ui->checkBox_watchEnable->setCheckable(true);
     ui->checkBox_watchMod->setEnabled(false);
+    seatId = -1;
 }
 
 void Poker_Client::slot_disconnected()
@@ -435,6 +448,12 @@ void Poker_Client::on_pushButton_join_clicked()
 {
     serverIp = ui->lineEdit_ip->text();
     port = ui->lineEdit_port->text().toInt();
+    if(ui->checkBox_watchMod->isChecked()){
+        if(ui->lineEdit_watchId->text().toInt() < 0 || ui->lineEdit_watchId->text().toInt() > nameList.count()){
+            ui->textBrowser_log->append("观战序号不合法，全局观战为0，其余观战序号为选手序号");
+            return;
+        }
+    }
     if(ui->lineEdit_name->text().isEmpty()){
         ui->textBrowser_log->append("名字不能为空！");
     }else{

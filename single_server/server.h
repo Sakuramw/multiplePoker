@@ -51,7 +51,7 @@ public slots:
     void slot_winner(QString id);
 private:
     void incomingConnection(int socketId);
-    QVector<int > readyId,inDesk,winnerId;
+    QVector<int > readyId,inDesk,winnerId,watchPlayerId;
     int whoDealer,round,beatId,firstPassId,whoCall;
     int allMoney,defaultMoney,defaultJudge,whoNext;
 //    int callMoney;
