@@ -20,13 +20,10 @@ public:
     void shuffleCards();
     void m_sleep(int msec);
     void newRound();
-    QVector<Client* > playClientList;
+    QVector<Client* > ClientList;
     QVector<Client* > reconnectedClient;
-    QVector<Client* > watchClient;
-    QVector<Client* > tempClient;
     quint64 maxCardLevel(QStringList sevCard);
     void winRateTest(int playernum);
-    void sendAllList();
 
 signals:
     void sig_updateLog(QString str);
@@ -52,12 +49,12 @@ public slots:
     void slot_winner(QString id);
 private:
     void incomingConnection(int socketId);
-    QVector<int > readyId,inDesk,winnerId,watchPlayerId;
+    QVector<int > readyId,inDesk,winnerId;
     int whoDealer,round,beatId,firstPassId,whoCall;
     int allMoney,defaultMoney,defaultJudge,whoNext;
 //    int callMoney;
     int addMoney,divideMoney;
-    QStringList poker,playerList,playerScore,watchList;
+    QStringList poker,playerList,playerScore;
     bool isANC,isFP,isFirstRun,isNewRound,isPlaying,isRecon;
     bool isSomeOneLose;
 };

@@ -1,7 +1,6 @@
 ﻿#include "poker_client.h"
 #include <QApplication>
 #include <QTextCodec>
-#include "login.h"
 
 int main(int argc, char *argv[])
 {
@@ -10,10 +9,8 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForCStrings(codec);
     QTextCodec::setCodecForTr(codec);
     QApplication a(argc, argv);
-//    Login l;
     Poker_Client w;
-//    l.show();
-//    if(l.exec() == QDialog::Accepted)
-        w.show();
+    w.show();
+
     return a.exec();
 }
