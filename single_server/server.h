@@ -26,6 +26,7 @@ public:
     QVector<Client* > tempClient;
     quint64 maxCardLevel(QStringList sevCard);
     void winRateTest(int playernum);
+    void sendAllList();
 
 signals:
     void sig_updateLog(QString str);

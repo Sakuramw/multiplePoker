@@ -44,7 +44,7 @@ public:
         SEAT = 21,
         WHOPLAY,
         MYCARDS,
-        GIVEUP,
+        RADIOPLAYDATA,
         PUBLICCARD = 33,
         RADIOCARD,
         NEWROUND,

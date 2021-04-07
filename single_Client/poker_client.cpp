@@ -104,7 +104,7 @@ void Poker_Client::slot_readServer()
 
         if(tcpsocket->bytesAvailable()<nextBlockSize) return;
         quint8 requestType;
-        int tempId,whoGiveup;
+        int tempId;
         //    bool isConfirm;
         QByteArray tempChat,tempLog;
         QString str,tempCard,tempName,otherCard1,otherCard2;
@@ -204,10 +204,24 @@ void Poker_Client::slot_readServer()
 
             }
             break;
-        case GIVEUP:
-            in >> whoGiveup;
-            ui->tableWidget_playerName->setItem(whoGiveup,2,new QTableWidgetItem("已弃牌"));
+        case RADIOPLAYDATA:{
+            int player,money;
+            bool pass , giveup;
+            in >> player >> money >> pass>> giveup;
+            if(giveup){
+                ui->tableWidget_playerName->setItem(player,2,new QTableWidgetItem("弃牌"));
+            }
+            if(money > 0){
+                ui->tableWidget_playerName->setItem(player,2,new QTableWidgetItem("加注：" + QString::number(money)));
+            }
+            if(pass){
+                ui->tableWidget_playerName->setItem(player,2,new QTableWidgetItem("过牌"));
+            }
+            if(money == 0 && !giveup && !pass){
+                ui->tableWidget_playerName->setItem(player,2,new QTableWidgetItem("跟注"));
+            }
             break;
+        }
         case PUBLICCARD:
             in >> tempCard;
             if(tempCard.contains("♥") || tempCard.contains("♦")){
@@ -252,6 +266,11 @@ void Poker_Client::slot_readServer()
             break;
         case NEWROUND:
             in >>isNewRound;
+            for(int i = 0; i < nameList.count();++i){
+                if(!ui->tableWidget_playerName->item(i,2)->text().contains("弃牌")){
+                    ui->tableWidget_playerName->item(i,2)->setText("");
+                }
+            }
             break;
         case JUDGE:
             in>> judgeId;
@@ -449,8 +468,8 @@ void Poker_Client::on_pushButton_join_clicked()
     serverIp = ui->lineEdit_ip->text();
     port = ui->lineEdit_port->text().toInt();
     if(ui->checkBox_watchMod->isChecked()){
-        if(ui->lineEdit_watchId->text().toInt() < 0 || ui->lineEdit_watchId->text().toInt() > nameList.count()){
-            ui->textBrowser_log->append("观战序号不合法，全局观战为0，其余观战序号为选手序号");
+        if(ui->lineEdit_watchId->text().toInt() < 0 || ui->lineEdit_watchId->text().toInt() > 20){
+            ui->textBrowser_log->append("观战序号不合法，全局观战为0，最大不能超过20！！！");
             return;
         }
     }

@@ -118,6 +118,9 @@ void Client::slot_readClient()
             //        disconTime.stop();
             //        disconTime.start(70000);
             //        break;
+        case WATCHENABLE:
+            in >> isEnableWatch;
+            break;
 
 
         }
