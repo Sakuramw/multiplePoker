@@ -116,11 +116,6 @@ void Client::slot_readClient()
 
 
         }
-#if 0
-        QByteArray btaChat /*= readAll()*/;
-        in >> btaChat;
-        emit sig_radioChatText(btaChat);
-#endif
         nextBlockSize = 0;
     }
 }

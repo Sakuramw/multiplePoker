@@ -3,6 +3,9 @@
 #include <QTime>
 #include <ctime>
 #include <cstdlib>
+#include <QMessageBox>
+#include <QDateTime>
+#define FilePath "c:/TexsPoker.txt"
 
 Server::Server(QObject *parent) : QTcpServer(parent)
 {
@@ -13,6 +16,13 @@ Server::Server(QObject *parent) : QTcpServer(parent)
     winnerId.clear();
     isANC = false,isFP = true , isFirstRun = true,isSomeOneLose =false;
     isPlaying = false;
+    //方式：Append为追加，WriteOnly，ReadOnly
+    file.setFileName(FilePath);
+    if (!file.open(QIODevice::Append|QIODevice::Text)) {
+        QMessageBox::critical(NULL, "提示", "无法创建日志存档文件");
+    }
+    QTextStream out(&file);
+    out<<QDateTime::currentDateTime().toString().toUtf8()<<endl;
     connect(this,SIGNAL(sig_gameBegin()),
             this,SLOT(slot_playGame()));
     //    connect(this,SIGNAL(sig_next()),
@@ -515,13 +525,14 @@ void Server::slot_emitChatText(QByteArray bta)
 
 void Server::slot_emitLogText(QByteArray bta)
 {
+    QTextStream outLog(&file);
+    outLog<<QString(bta).toUtf8()<<endl;
     QByteArray block;
     QDataStream out(&block,QIODevice::WriteOnly);
     out.setVersion(QDataStream::Qt_4_8);
     out << quint16(0) << quint8(101) <<bta;
     out.device() ->seek(0);
     out<<quint16(block.size()-sizeof(quint16));
-
     for(int i = 0;i<ClientList.count();i++){
 
         ClientList[i]->write(block);
@@ -1428,7 +1439,7 @@ void Server::slot_gameOver(int status)
                 return;
             }
         }
-        divideMoney = allMoney / winnerId.count();
+        divideMoney = (double)allMoney / winnerId.count();
         //开牌结束，收到获胜者id
         if(winnerId.count() == 1){
             ClientList[winnerId[0]]->score += allMoney;
@@ -1475,8 +1486,14 @@ void Server::slot_gameOver(int status)
         out<<quint16(block.size()-sizeof(quint16));
         ClientList[i]->write(block);
         ClientList[i]->waitForBytesWritten();
+        if(i!=ClientList.count()-1){
+            QTextStream outLog(&file);
+            outLog<<QString(i+1).toUtf8()<<"\t";
+        }else{
+            QTextStream outLog(&file);
+            outLog<<QString(i+1).toUtf8()<<endl;
+        }
     }
-    //m_sleep(312);
     for(int i = 0;i<ClientList.count();i++){
         playerScore[i] = QString::number(ClientList[i]->score);
     }
@@ -1490,7 +1507,6 @@ void Server::slot_gameOver(int status)
         ClientList[i]->write(block);
         ClientList[i]->waitForBytesWritten();
     }
-    //m_sleep(200);
     isPlaying = false;
     //重置数据
     if(reconnectedClient.count()>0){

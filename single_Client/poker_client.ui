@@ -19,7 +19,7 @@
   <widget class="QLCDNumber" name="lcdNumber_countDown">
    <property name="geometry">
     <rect>
-     <x>580</x>
+     <x>560</x>
      <y>10</y>
      <width>92</width>
      <height>50</height>
@@ -50,7 +50,7 @@
   <widget class="Line" name="line">
    <property name="geometry">
     <rect>
-     <x>550</x>
+     <x>530</x>
      <y>10</y>
      <width>20</width>
      <height>51</height>
@@ -60,10 +60,10 @@
     <enum>Qt::Vertical</enum>
    </property>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>684</x>
+     <x>10</x>
      <y>10</y>
      <width>301</width>
      <height>611</height>
@@ -202,10 +202,10 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>342</x>
+     <x>322</x>
      <y>10</y>
      <width>201</width>
      <height>51</height>
@@ -262,10 +262,10 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>660</x>
      <y>10</y>
      <width>323</width>
      <height>611</height>
@@ -494,10 +494,10 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>340</x>
+     <x>320</x>
      <y>418</y>
      <width>331</width>
      <height>201</height>
@@ -658,7 +658,7 @@
   <widget class="QWidget" name="widget_pCard" native="true">
    <property name="geometry">
     <rect>
-     <x>342</x>
+     <x>322</x>
      <y>70</y>
      <width>331</width>
      <height>206</height>
@@ -862,10 +862,10 @@
     </item>
    </layout>
   </widget>
-  <widget class="QWidget" name="">
+  <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
     <rect>
-     <x>342</x>
+     <x>322</x>
      <y>282</y>
      <width>331</width>
      <height>131</height>
@@ -985,9 +985,16 @@
     </item>
    </layout>
   </widget>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>layoutWidget</zorder>
+  <zorder>widget_pCard</zorder>
+  <zorder>layoutWidget</zorder>
   <zorder>lcdNumber_countDown</zorder>
-  <zorder>label_score</zorder>
   <zorder>line</zorder>
+  <zorder>groupBox_log</zorder>
+  <zorder>groupBox_chat</zorder>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

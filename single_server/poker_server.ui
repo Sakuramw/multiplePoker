@@ -95,6 +95,9 @@
    </property>
   </widget>
   <widget class="QSpinBox" name="spinBox_id">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
      <x>660</x>

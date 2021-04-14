@@ -6,6 +6,7 @@
 #include <QVector>
 #include <QTcpServer>
 #include <QCoreApplication>
+#include <QFile>
 #include "client.h"
 #define MAXNUM 100
 #define PLAYERLIST 13
@@ -53,10 +54,12 @@ private:
     int whoDealer,round,beatId,firstPassId,whoCall;
     int allMoney,defaultMoney,defaultJudge,whoNext;
 //    int callMoney;
-    int addMoney,divideMoney;
+    int addMoney;
+    double divideMoney;
     QStringList poker,playerList,playerScore;
     bool isANC,isFP,isFirstRun,isNewRound,isPlaying,isRecon;
     bool isSomeOneLose;
+    QFile file;
 };
 
 #endif // SERVER_H

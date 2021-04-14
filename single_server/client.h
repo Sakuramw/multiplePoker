@@ -45,7 +45,7 @@ public:
     int thisRoundAdd;
     bool isPass,isGiveup;
     int seatId,defaultBet;
-    int score;
+    double score;
 //    QTimer disconTime,timer1;
 
 };
