@@ -37,9 +37,9 @@ void Poker_Server::slot_updateLog(QString str)
 
 void Poker_Server::slot_gameBegin()
 {
-    for(int i = 0;i<server.playClientList.count();i++){
+    for(int i = 0;i<server.ClientList.count();i++){
         connect(this,SIGNAL(sig_defaultSet(int,int)),
-                server.playClientList[i],SLOT(slot_defaultSet(int)));
+                server.ClientList[i],SLOT(slot_defaultSet(int)));
     }
 }
 
@@ -63,9 +63,9 @@ void Poker_Server::on_pushButton_listen_net_clicked()
 
 void Poker_Server::on_pushButton_clicked()
 {
-    if(server.playClientList.count() != 0){
-        for(int i =0;i<server.playClientList.count();i++){
-            ui->textBrowser_log->append(QString::number(server.playClientList[i]->score));
+    if(server.ClientList.count() != 0){
+        for(int i =0;i<server.ClientList.count();i++){
+            ui->textBrowser_log->append(QString::number(server.ClientList[i]->score));
         }
     }else{
         ui->textBrowser_log->append("暂时无人加入");

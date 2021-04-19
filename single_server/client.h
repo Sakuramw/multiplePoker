@@ -37,16 +37,15 @@ public:
         PLAYDATA = 31,
         WINNER = 43,
         CHAT = 100,
-        OVERTIME = 102,
-        WATCHENABLE = 103
+        OVERTIME = 102
     };
     quint16 nextBlockSize;
     QString playerName,winnerId;
     int allMoney,addMoney;
     int thisRoundAdd;
-    bool isPass,isGiveup,isEnableWatch;
-    int seatId,defaultBet,watchId;
-    int score;
+    bool isPass,isGiveup;
+    int seatId,defaultBet;
+    double score;
 //    QTimer disconTime,timer1;
 
 };

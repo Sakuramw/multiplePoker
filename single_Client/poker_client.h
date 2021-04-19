@@ -40,11 +40,10 @@ public:
         PLAYERLIST = 13,
         SCORELIST,
         NEWREADY,
-        WATCHLIST,
         SEAT = 21,
-        WHOPLAY,
-        MYCARDS,
-        RADIOPLAYDATA,
+        WHOPLAY = 22,
+        MYCARDS = 23,
+        RADIOPLAYDATA = 24,
         PUBLICCARD = 33,
         RADIOCARD,
         NEWROUND,
@@ -62,7 +61,7 @@ public slots:
     void slot_disconnected();
     void slot_quicklyMessage(QString str);
     void slot_countDown();
-    void slot_addMoney();
+    void slot_addQuicklyKey();
 //    void slot_loseConnect();
 //    void slot_turnMy();
 //    void slot_gameOver();
@@ -89,11 +88,7 @@ private slots:
 
     void on_pushButton_call_clicked();
 
-//    void on_pushButton_winner_clicked();
-
-    void on_checkBox_watchMod_stateChanged(int arg1);
-
-    void on_checkBox_watchEnable_stateChanged(int arg1);
+    void on_pushButton_winner_clicked();
 
 private:
     Ui::Poker_Client *ui;
@@ -103,14 +98,12 @@ private:
 //    Player player;
     int addMoney,seatId,turnWho,myCardFlag,puCardFlag;
     bool isPass,isPause,isGiveup,isTurnMy,isAdd,isCall,isNewRound,isFirstRun,isSending;
-    int score,judgeId,port,countTime,watchId;
-    QStringList nameList,playerScore,watchList;
-    QVector<int > watchPlayerId;
+    int score,judgeId,port,countTime;
+    QStringList nameList,playerScore;
     QList<QLabel *> cardLabel;
     QList<QLabel *> pCard;
     QDialog *pauseDialog;
     QTimer countDown;
-    bool isAddEnable,isWatchEnable;
 };
 
 #endif // POKER_CLIENT_H
